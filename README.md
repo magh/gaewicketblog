@@ -7,6 +7,8 @@ Simple blog framework using Wicket on Google App Engine.
 - ./src/main/java/org/gaewicketblog/wicket/BorderPage.properties (Optional)
 - ./src/main/java/org/gaewicketblog/wicket/ContactPanel.properties (Optional)
 - ./src/main/java/org/gaewicketblog/wicket/BlogApplication.properties (Optional)
+- ./src/main/java/org/gaewicketblog/wicket/images/icon.png (Optional)
+- ./src/main/java/org/gaewicketblog/wicket/images/favicon.ico (Optional)
 
 ## Build
 ### Full update, asks for login credentials.
