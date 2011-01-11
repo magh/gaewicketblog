@@ -16,5 +16,5 @@ ant clean update
 ### Maven project build (not required before appengine update).
 mvn clean package
 
-![Screenshoot](http://magh.github.com/todo.txt-touch/screenshots/2011-01-11.jpg)
+![Screenshoot](http://magh.github.com/gaewicketblog/screenshots/2011-01-11.png)
 
