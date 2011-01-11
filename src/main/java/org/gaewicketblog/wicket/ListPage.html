@@ -1,0 +1,23 @@
+<wicket:extend>
+	<div id="about">
+		<h1><span wicket:id="topic">[News]</span></h1>
+	</div>
+	<div class="featurebox">
+		<p><span wicket:id="topicdesc">[News and updates.]</span></p>
+	</div>
+	<div><input wicket:id="add1" type="button" value="New Post" wicket:message="value:listpage.post"></div>
+	<div class="featurebox">
+		<table cellspacing="0" class="dataview">
+		    <tr wicket:id="sorting">
+		        <td>
+			        <h3><a wicket:id="viewpost"><span wicket:id="subject">[subject]</span></a></h3>
+			        <p>Posted by <strong><span wicket:id="author">[author]</span></strong> <wicket:message key="listpage.on">on</wicket:message> <span wicket:id="date">[date]</span></p>
+			        <p><span wicket:id="text">[text]</span></p>
+			        <div><span wicket:id="comments">[comments]</span> <wicket:message key="listpage.comments">comments</wicket:message></div>
+		        </td>
+		    </tr>
+		</table>
+		<div><span wicket:id="navigator">[navigator]</span></div>
+		<div><input wicket:id="add2" type="button" value="New Post" wicket:message="value:listpage.post"></div>
+	</div>
+</wicket:extend>

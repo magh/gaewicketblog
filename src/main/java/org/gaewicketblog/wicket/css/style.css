@@ -1,0 +1,317 @@
+body {
+	width: 100%;
+	font: 13px/19px Helvetica, Arial, Geneva, sans-serif;
+	background-color: #ededed;
+	color: #3d3d3d;
+/*	text-shadow: #fff 0 1px 0; */
+	margin: 0;
+}
+
+h1 { 
+	color: #191919;
+	margin-top: 0px;
+	margin-bottom: 10px;
+	font-size: 36px;
+	font-style: normal;
+	line-height: 36px;
+}
+
+h2 { 
+	color: #707070; 
+	font-size: 18px; 
+	margin-top: 10px; 
+	font-style: normal;
+	line-height: 1.25;
+}
+
+h3 { 
+	color: #303030;
+	font-size: 16px;
+	font-style: normal;
+	line-height: 1;
+}
+
+h4 { 
+	font-size: 14px; 
+	margin-bottom: 0; 
+}
+
+a {
+	color: #922323;
+	text-decoration: none;
+}
+
+a:hover { 
+	text-decoration: underline; 
+}
+
+ul { 
+	list-style-type: square; 
+}
+
+hr { border: 1px solid #ededed; }
+
+img { border: none; }
+
+img.right {
+	float: right;
+	margin: 0 0 10px 15px;
+}
+
+img.left {
+	float: left;
+	margin: 0 15px 10px 0;
+
+}
+
+img.center {
+	margin-right: auto;
+	margin-left: auto;
+	margin-bottom: 10px;
+}
+
+/* 
+	Navigation
+*/
+
+#header {
+	background: #ededed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 71px;
+	margin: auto;
+}
+
+#nav ul {
+	list-style-type: none;
+	list-style-position: none;
+	text-align: right;
+	margin-left: 482px;
+}
+
+#nav ul li {
+	float: left;
+}
+
+#nav ul li a { 
+	display: block;
+	color: #000;	
+	font-size: 12pt;
+	letter-spacing: 2px;
+	padding: 26px 10px;
+	text-decoration: none;
+}
+
+#nav ul li a:hover { 
+	color: #333;
+}
+
+.logo {
+	width: 244px;
+	height: 47px;
+	left: 45px;
+	top: 12px;
+	position: relative;
+	float: left;
+}
+
+/* 
+	Wrapper
+*/
+
+div#wrapper {
+	width: 960px;		
+ 	margin: 0 auto;
+	background-color: #fff;
+	-moz-box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);	
+}
+
+/* 
+	Content
+*/
+
+div#maincontent { 
+	width: 600px;  
+	height: auto;
+	padding: 20px;
+	float: left;
+}
+
+/*
+	Products
+*/
+
+div#homepage { 
+	width: 900px;  
+	padding: 20px;
+}
+
+div#homepage a {
+	color: #3d3d3d;
+}
+
+div#homepage a:hover {
+	text-decoration: none;
+}
+
+#big-apps {
+	width: 100%;
+  display: inline-block;
+  margin-bottom: 2%;
+}
+
+#big-apps h1 {
+  padding-top: 35px;
+}
+
+img.app_icon {
+  float: left;
+  margin-right: 20px;
+}
+
+#big-apps > div.app {
+  width: 45%;
+  font-size: 1.1em;
+  padding-bottom:1em;
+  float: left;
+  padding-left: 40px;
+}
+
+#little-apps {
+	width: 100%;
+  border-top: 1px solid #cecece;
+  display: inline-block;
+  padding-top: 30px;
+}
+
+#little-apps > div.app {
+	width: 40%;
+  padding-bottom:3em;
+  float: left;
+  padding-left: 90px;
+}
+
+h3.app_name {
+	padding-top: 3px;
+	line-height: 0px;
+}
+
+h5.app_desc {
+	line-height: 0px;
+}
+
+/*
+	Sidebar
+*/
+
+div#sidebar {
+	width: 250px;
+	height: auto;
+	padding-right: 20px;
+	float: right;
+	position: relative;
+}
+
+div.download {
+	line-height: 0px;
+}
+
+div.sidebox {
+	background-color: #f8f8f8;
+	font-size: 11px;
+	margin: 20px auto;
+	border: 1px solid #cdcdcd;
+	height: auto;
+}
+
+div.sidebox h5 {
+	height: 25px;
+	background-color: #929292;
+	font-size: 13px;
+	line-height: 25px;
+	color: #fff;
+	text-shadow: rgba(0,0,0,0.75) 0 1px 2px;
+	text-align: center;
+	padding: 3px;
+	margin: 0px;
+}
+
+div.sidebox-content {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+div.sidebox ul {
+	padding-left: 15px;
+}
+
+/*
+	Footer
+*/
+
+div#footer {
+	color: #adadad;
+	width: 100%;
+	margin: 0 auto;
+	font-size: 11px;
+	line-height: 13px;
+	text-align: center;
+	clear: both;
+	padding-bottom: 10px;
+}
+
+div#footer a {
+	color: #adadad; 
+}
+
+p.footer-sections { text-transform: lowercase; margin-bottom: 8px;}
+
+span.release_date {  
+	color: #000;
+	font-size: 12px; 
+	font-weight: normal;
+	line-height: 1;	
+}
+
+input[type=text].lookup_form {
+	width: 300px;
+}
+
+table.license_table {
+	border: 1px solid #ededed;
+	padding: 0;
+}
+
+table.license_table th {
+	text-align: center;
+	background-color: #cecece;
+}
+
+table.license_table td {
+	padding: 5px;
+}
+
+p.desktop {
+	padding-top: 10px;
+	padding-bottom: 5px;
+}
+
+span.new-feature {
+	color: #922323;
+}
+
+fieldset.latest_build
+{
+	border: 1px solid #000;
+	margin-bottom: 20px;
+}
+
+fieldset.latest_build legend {
+	font-weight: bold;
+}
+
+.feedbackPanelERROR {
+	color: red
+}
