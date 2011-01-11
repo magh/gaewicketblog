@@ -24,6 +24,7 @@ public class BlogApplication extends WebApplication {
 		mountBookmarkablePage("/"+Constants.BUGS_STR, ListPage.class);
 		mountBookmarkablePage("/"+Constants.FEATURE_STR, ListPage.class);
 		mountBookmarkablePage("/"+Constants.ABOUT_STR, ListPage.class);
+		mountBookmarkablePage("/login", LoginPage.class);
 	}
 
 	@Override

@@ -62,6 +62,7 @@ public class AddPage extends BorderPage {
 				Comment comment = new Comment(id, subject.getObject(),
 						new Text(text.getObject()), name.getObject(), ipaddress);
 				try {
+					//TODO store email and homepage
 					comment = pm.makePersistent(comment);
 
 					sendEmailToSelf(getString("borderpage.title")+": "

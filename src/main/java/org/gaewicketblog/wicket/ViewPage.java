@@ -10,14 +10,16 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.gaewicketblog.common.AppEngineHelper;
+import org.gaewicketblog.common.DbHelper;
+import org.gaewicketblog.common.PMF;
+import org.gaewicketblog.model.Comment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Text;
-import org.gaewicketblog.common.PMF;
-import org.gaewicketblog.model.Comment;
 
 @SuppressWarnings("serial")
 public class ViewPage extends BorderPage {
@@ -46,7 +48,8 @@ public class ViewPage extends BorderPage {
 	}
 
 	public void init(IModel<Comment> commentModel) {
-		final Comment comment = commentModel.getObject();
+		final boolean admin = AppEngineHelper.isAdmin();
+        final Comment comment = commentModel.getObject();
 		add(new Label("author", comment.getAuthor()));
 		add(new Label("subject", comment.getSubject()));
 		add(new SmartLinkMultiLineLabel("text", comment.getText().getValue()));
@@ -63,6 +66,18 @@ public class ViewPage extends BorderPage {
 				item.add(new SmartLinkMultiLineLabel("text", comment.getText()
 						.getValue()));
 				item.add(new Label("date", ""+comment.getDate()));
+				item.add(new Link<String>("editcomment"){
+					@Override
+					public void onClick() {
+						setResponsePage(new UpdatePage(comment));
+					}
+				}.setVisible(admin));
+				item.add(new Link<String>("deletecomment"){
+					@Override
+					public void onClick() {
+						DbHelper.delete(comment);
+					}
+				}.setVisible(admin));
 			}
 		};
 
@@ -89,6 +104,20 @@ public class ViewPage extends BorderPage {
 				setResponsePage(new ListPage(comment.getParentid()));
 			}
 		});
+		//edit
+		add(new Link<String>("edit"){
+			@Override
+			public void onClick() {
+				setResponsePage(new UpdatePage(comment));
+			}
+		}.setVisible(admin));
+		//delete
+		add(new Link<String>("delete"){
+			@Override
+			public void onClick() {
+				DbHelper.delete(comment);
+			}
+		}.setVisible(admin));
 	}
 
 }

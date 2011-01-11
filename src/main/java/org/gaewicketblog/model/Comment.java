@@ -41,6 +41,7 @@ public class Comment implements Serializable {
 	private Boolean hidden;
 
 //	@Persistent
+//	@Element(dependent = "true")
 //	private List<Comment> comments;
 
 	public Comment(long parentid, String subject, Text text,

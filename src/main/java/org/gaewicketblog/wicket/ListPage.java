@@ -15,6 +15,7 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.gaewicketblog.common.AppEngineHelper;
 import org.gaewicketblog.common.DbHelper;
 import org.gaewicketblog.common.PMF;
 import org.gaewicketblog.model.Comment;
@@ -74,6 +75,10 @@ public class ListPage extends BorderPage {
 						setResponsePage(new ViewPage(item.getModel()));
 					}
 				}.add(new Label("subject", comment.getSubject())));
+				item.add(new Link<String>("reply") {
+					@Override
+					public void onClick() {}
+				}.setVisible(false));
 			}
 		};
 
@@ -107,12 +112,12 @@ public class ListPage extends BorderPage {
 		case Constants.FAQ:
 			add(new Label("topic", getString("borderpage.li.faq.title")));
 			add(new Label("topicdesc", getString("borderpage.li.faq.description")));
-			canPost = true;
+			canPost = false;
 			break;
 		case Constants.HELP:
 			add(new Label("topic", getString("borderpage.li.help.title")));
 			add(new Label("topicdesc", getString("borderpage.li.help.description")));
-			canPost = true;
+			canPost = false;
 			break;
 		case Constants.FEATURE:
 			add(new Label("topic", getString("borderpage.li.features.title")));
@@ -157,6 +162,14 @@ public class ListPage extends BorderPage {
 						setResponsePage(new ViewPage(item.getModel()));
 					}
 				}.add(new Label("subject", comment.getSubject())));
+				item.add(new Link<String>("reply") {
+					@Override
+					public void onClick() {
+						String re = getString("listpage.reply.prepend");
+						setResponsePage(new AddPage(comment.getId(), re
+								+ comment.getSubject()));
+					}
+				});
 			}
 		};
 
@@ -166,20 +179,22 @@ public class ListPage extends BorderPage {
 		add(dataView);
 
 		add(new PagingNavigator("navigator", dataView));
-		
+
+		boolean admin = AppEngineHelper.isAdmin();
+
 		//add
 		add(new Link<String>("add1") {
 			@Override
 			public void onClick() {
 				setResponsePage(new AddPage(id, ""));
 			}
-		}.setVisible(canPost));
+		}.setVisible(canPost || admin));
 		add(new Link<String>("add2") {
 			@Override
 			public void onClick() {
 				setResponsePage(new AddPage(id, ""));
 			}
-		}.setVisible(canPost));
+		}.setVisible(canPost || admin));
 	}
 
 }
