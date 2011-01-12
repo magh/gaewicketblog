@@ -2,6 +2,7 @@ package org.gaewicketblog.wicket;
 
 import javax.jdo.PersistenceManager;
 
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.extensions.markup.html.basic.SmartLinkMultiLineLabel;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
@@ -14,6 +15,7 @@ import org.gaewicketblog.common.AppEngineHelper;
 import org.gaewicketblog.common.DbHelper;
 import org.gaewicketblog.common.PMF;
 import org.gaewicketblog.model.Comment;
+import org.gaewicketblog.model.CommentHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +47,14 @@ public class ViewPage extends BorderPage {
 
 	public ViewPage(IModel<Comment> commentModel) {
 		init(commentModel);
+	}
+	
+	public ViewPage() {
+		log.error("<init>");
+	}
+	
+	public ViewPage(PageParameters pageparameters) {
+		log.error("PageParameters: "+pageparameters.toString());
 	}
 
 	public void init(IModel<Comment> commentModel) {
@@ -111,6 +121,10 @@ public class ViewPage extends BorderPage {
 				DbHelper.delete(comment);
 			}
 		}.setVisible(admin));
+
+		//TODO add server before urlPath.
+		add(new DisqusPanel("disqus", "" + comment.getId(), CommentHelper
+				.getUrlPath(comment), comment.getSubject(), false));
 	}
 
 }

@@ -76,4 +76,10 @@ public class CommentHelper {
 		return res;
 	}
 
+	public static String getUrlPath(Comment comment){
+		//TODO make RESTfull
+//		return "/"+comment.getSubject().toLowerCase().replace(' ', '_');
+		return "/"+comment.getId();
+	}
+
 }
