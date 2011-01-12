@@ -7,14 +7,18 @@
 	</div>
 	<div class="featurebox">
 		<p><span wicket:id="text">[text]</span></p>
-		<p><strong><span wicket:id="comments">[X comments]</span> <wicket:message key="viewpage.responses">Responses</wicket:message></strong></p>
+		<p><strong>
+			<span wicket:id="comments">[X comments]</span> <wicket:message key="viewpage.comments">Comments</wicket:message>
+			<a wicket:id="edit"> | <wicket:message key="viewpage.edit">Edit</wicket:message></a>
+			<a wicket:id="delete"> | <wicket:message key="viewpage.delete">Delete</wicket:message></a>
+		</strong></p>
 		<table cellspacing="0" class="dataview">
 		    <tr wicket:id="sorting">
 		        <td>
 			        <div style="margin: 10px; padding-right: 10px; padding-left: 10px; border: 1px solid">
 						<h4>Reply by <span wicket:id="author">[author]</span> <wicket:message key="viewpage.on">on</wicket:message> <span wicket:id="date">[date]</span></h4>
 						<p><strong><span wicket:id="subject">[subject]</span></strong></p>
-				        <p><span wicket:id="text">[text]</span><a wicket:id="editcomment">edit</a><a wicket:id="deletecomment">delete</a></p>
+				        <p><span wicket:id="text">[text]</span><a wicket:id="editcomment"> | Edit</a><a wicket:id="deletecomment"> | Delete</a></p>
 				    </div>
 		        </td>
 		    </tr>
@@ -22,9 +26,6 @@
 		<div><span wicket:id="navigator">[navigator]</span></div>
 		<div>
 			<input wicket:id="add" type="button" value="Post Reply" wicket:message="value:viewpage.reply">
-			<input wicket:id="back" type="button" value="Back" wicket:message="value:viewpage.back">
-			<input wicket:id="edit" type="button" value="Edit">
-			<input wicket:id="delete" type="button" value="Delete">
 		</div>
 	</div>
 </wicket:extend>

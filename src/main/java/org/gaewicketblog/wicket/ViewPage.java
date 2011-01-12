@@ -87,7 +87,7 @@ public class ViewPage extends BorderPage {
 		add(dataView);
 
 		add(new PagingNavigator("navigator", dataView));
-		
+
 		//add
 		add(new Link<String>("add"){
 			@Override
@@ -95,13 +95,6 @@ public class ViewPage extends BorderPage {
 				String re = getString("viewpage.reply.prepend");
 				setResponsePage(new AddPage(comment.getId(), re
 						+ comment.getSubject()));
-			}
-		});
-		//back
-		add(new Link<String>("back"){
-			@Override
-			public void onClick() {
-				setResponsePage(new ListPage(comment.getParentid()));
 			}
 		});
 		//edit
