@@ -8,6 +8,9 @@ import javax.jdo.Query;
 
 import org.gaewicketblog.model.Comment;
 
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
+
 public class DbHelper {
 
 	public static int count(Query query){
@@ -57,6 +60,30 @@ public class DbHelper {
 			}
 		}
 		pm.deletePersistent(comment);
+	}
+
+	public static Comment getComment(long id){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			Key key = KeyFactory.createKey(Comment.class.getSimpleName(), id);
+			return pm.getObjectById(Comment.class, key);
+		} finally {
+			pm.close();
+		}
+	}
+
+	public static Comment getCommentByLink(String link){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Query query = pm.newQuery(Comment.class);
+		query.setFilter("link == linkParam");
+		query.declareParameters("String linkParam");
+		query.setUnique(true);
+		try{
+			return (Comment) query.execute(link);
+		}finally{
+			query.closeAll();
+			pm.close();
+		}
 	}
 
 	public static List<Comment> getComments(long parentid, PersistenceManager pm){

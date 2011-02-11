@@ -13,9 +13,13 @@ import org.apache.wicket.model.Model;
 
 import org.gaewicketblog.common.PMF;
 import org.gaewicketblog.model.Comment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("serial")
 public class SearchPanel extends Panel {
+
+	private final static Logger log = LoggerFactory.getLogger(SearchPanel.class);
 
 	public SearchPanel(String id) {
 		super(id);
@@ -25,6 +29,7 @@ public class SearchPanel extends Panel {
 			@Override
 			protected void onSubmit() {
 				String in = model.getObject();
+				log.info("search: "+in);
 				if(in == null || in.length() <= 3) {
 					error("Invalid search term: "+in);
 				} else {

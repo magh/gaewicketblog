@@ -11,13 +11,12 @@ public class AppEngineHelper {
 
 	private final static Logger log = LoggerFactory.getLogger(AppEngineHelper.class);
 
-	public static boolean isAdmin(){
+	public static boolean isAdmin(String adminemail) {
 		UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();
         if (user != null) {
         	log.debug("user="+user.toString());
-        	//TODO is admin check
-        	return true;
+        	return adminemail.equalsIgnoreCase(user.getEmail());
         }
 		return false;
 	}

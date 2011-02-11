@@ -17,10 +17,10 @@ public class LoginPage extends BorderPage {
         User user = userService.getCurrentUser();
         String redirectUrl;
         if (user != null) {
-        	log.error("user="+user.toString());
+        	log.debug("user="+user.toString());
         	redirectUrl = "/";
         } else {
-        	log.error("user is null");
+        	log.warn("user is null");
         	redirectUrl = userService.createLoginURL("/");
         }
     	getRequestCycle().setRequestTarget(new RedirectRequestTarget(redirectUrl));

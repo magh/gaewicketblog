@@ -16,6 +16,16 @@ public class Util {
 		return def;
 	}
 
+	public static long parseLong(String in, long def){
+		try{
+			if(!isEmpty(in)){
+				return Long.parseLong(in);
+			}
+		}catch(Throwable t){
+		}
+		return def;
+	}
+
 	public static String readStream(InputStream is) throws IOException {
 		try {
 			int c;

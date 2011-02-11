@@ -1,26 +1,20 @@
 package org.gaewicketblog.wicket;
 
-import javax.jdo.PersistenceManager;
-
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.extensions.markup.html.basic.SmartLinkMultiLineLabel;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.protocol.http.WebRequest;
 import org.gaewicketblog.common.AppEngineHelper;
 import org.gaewicketblog.common.DbHelper;
-import org.gaewicketblog.common.PMF;
+import org.gaewicketblog.common.Util;
 import org.gaewicketblog.model.Comment;
-import org.gaewicketblog.model.CommentHelper;
+import org.gaewicketblog.wicket.common.DisqusPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Text;
 
 @SuppressWarnings("serial")
@@ -28,85 +22,49 @@ public class ViewPage extends BorderPage {
 
 	private final static Logger log = LoggerFactory.getLogger(ListPage.class);
 
-	public ViewPage(long parentid){
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		try {
-			Key key = KeyFactory.createKey(Comment.class.getSimpleName(), parentid);
-			Comment comment = pm.getObjectById(Comment.class, key);
-			if(comment == null){
-				log.error(getString("viewpage.error.parentcommentnotfound")+" parentid="+parentid);
-				String error = getString("viewpage.error.error");
-				comment = new Comment(Constants.NEWS, error, new Text(error),
-						error, error);
-			}
-			init(new Model<Comment>(comment));
-		} finally {
-			pm.close();
-		}
-	}
-
 	public ViewPage(IModel<Comment> commentModel) {
 		init(commentModel);
 	}
 	
-	public ViewPage() {
-		log.error("<init>");
+	public ViewPage(long parentid){
+		Comment comment = DbHelper.getComment(parentid);
+		if(comment == null){
+			log.error(getString("viewpage.error.commentnotfound")+" parentid="+parentid);
+			String error = getString("viewpage.error.error");
+			comment = new Comment(Constants.NEWS, error, new Text(error),
+					error, error, error);
+		}
+		init(new Model<Comment>(comment));
 	}
-	
-	public ViewPage(PageParameters pageparameters) {
-		log.error("PageParameters: "+pageparameters.toString());
+
+	public ViewPage() {
+		String path = RequestCycle.get().getRequest().getPath();
+		log.debug("<init> path="+path);
+		long id = Util.parseLong(path, -1);
+		Comment comment;
+		if(id == -1){
+			comment = DbHelper.getCommentByLink("/"+path);
+		}else{
+			comment = DbHelper.getComment(id);
+		}
+		if(comment == null){
+			log.error(getString("viewpage.error.commentnotfound")+" id="+id);
+			String error = getString("viewpage.error.error");
+			comment = new Comment(Constants.NEWS, error, new Text(error),
+					error, error, error);
+		}
+		init(new Model<Comment>(comment));
 	}
 
 	public void init(IModel<Comment> commentModel) {
-		final boolean admin = AppEngineHelper.isAdmin();
+		String adminemail = getString("admin.email");
+		final boolean admin = AppEngineHelper.isAdmin(adminemail);
         final Comment comment = commentModel.getObject();
 		add(new Label("author", comment.getAuthor()));
 		add(new Label("subject", comment.getSubject()));
 		add(new SmartLinkMultiLineLabel("text", comment.getText().getValue()));
 		add(new Label("date", ""+comment.getDate()));
-		CommentProvider provider = new CommentProvider(comment.getId());
-		add(new Label("comments", ""+provider.size()));
-		
-		final DataView<Comment> dataView = new DataView<Comment>("sorting", provider) {
-			@Override
-			protected void populateItem(final Item<Comment> item) {
-				final Comment comment = item.getModelObject();
-				item.add(new Label("author", comment.getAuthor()));
-				item.add(new Label("subject", comment.getSubject()));
-				item.add(new SmartLinkMultiLineLabel("text", comment.getText()
-						.getValue()));
-				item.add(new Label("date", ""+comment.getDate()));
-				item.add(new Link<String>("editcomment"){
-					@Override
-					public void onClick() {
-						setResponsePage(new UpdatePage(comment));
-					}
-				}.setVisible(admin));
-				item.add(new Link<String>("deletecomment"){
-					@Override
-					public void onClick() {
-						DbHelper.delete(comment);
-					}
-				}.setVisible(admin));
-			}
-		};
 
-		dataView.setItemsPerPage(10);
-		provider.setSort("date", true);
-
-		add(dataView);
-
-		add(new PagingNavigator("navigator", dataView));
-
-		//add
-		add(new Link<String>("add"){
-			@Override
-			public void onClick() {
-				String re = getString("viewpage.reply.prepend");
-				setResponsePage(new AddPage(comment.getId(), re
-						+ comment.getSubject()));
-			}
-		});
 		//edit
 		add(new Link<String>("edit"){
 			@Override
@@ -119,12 +77,13 @@ public class ViewPage extends BorderPage {
 			@Override
 			public void onClick() {
 				DbHelper.delete(comment);
+				setResponsePage(new ListPage(comment.getParentid()));
 			}
 		}.setVisible(admin));
-
-		//TODO add server before urlPath.
-		add(new DisqusPanel("disqus", "" + comment.getId(), CommentHelper
-				.getUrlPath(comment), comment.getSubject(), false));
+		//disqus/comments
+		String uri = ((WebRequest) getRequest()).getHttpServletRequest()
+				.getRequestURL().toString();
+		add(new DisqusPanel("disqus", "" + comment.getId(), uri, comment.getSubject()));
 	}
 
 }

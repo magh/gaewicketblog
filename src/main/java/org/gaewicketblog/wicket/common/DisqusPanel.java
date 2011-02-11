@@ -1,4 +1,4 @@
-package org.gaewicketblog.wicket;
+package org.gaewicketblog.wicket.common;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -6,13 +6,15 @@ import org.gaewicketblog.common.Util;
 
 @SuppressWarnings("serial")
 public class DisqusPanel extends Panel {
+	
+	public static boolean DEVELOPER = false;
 
-	public DisqusPanel(String id, String pid, String purl, String ptitle, boolean devmode) {
+	public DisqusPanel(String id, String pid, String purl, String ptitle) {
 		super(id);
 		StringBuilder sb = new StringBuilder();
-		String shortname = getString("disquspanel.shortname");
-		if(Util.isEmpty(shortname)){
-			if(devmode){
+		String shortname = getString("disqus.shortname");
+		if(!Util.isEmpty(shortname)){
+			if(DEVELOPER){
 				sb.append("var disqus_developer = 1;\n"); // developer mode is on
 			}
 			sb.append("var disqus_shortname = '").append(shortname).append("';\n");

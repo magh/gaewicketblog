@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import org.gaewicketblog.common.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,10 +77,19 @@ public class CommentHelper {
 		return res;
 	}
 
-	public static String getUrlPath(Comment comment){
-		//TODO make RESTfull
-//		return "/"+comment.getSubject().toLowerCase().replace(' ', '_');
+	public static String getUrlPath(Comment comment) {
+		if(!Util.isEmpty(comment.getLink())){
+			return comment.getLink();
+		}
 		return "/"+comment.getId();
+	}
+
+	public static String genUrlPath(String subject) {
+		return "/"+escape(subject.toLowerCase().replace(' ', '_'));
+	}
+
+	public static String escape(String in) {
+		return in.replaceAll("[\\,/,?,:,\",*,<,>,|,\\',\\’,\\‘]", "");
 	}
 
 }

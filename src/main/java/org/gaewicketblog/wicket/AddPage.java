@@ -27,6 +27,7 @@ import org.apache.wicket.validation.validator.StringValidator;
 import org.gaewicketblog.common.PMF;
 import org.gaewicketblog.common.Util;
 import org.gaewicketblog.model.Comment;
+import org.gaewicketblog.model.CommentHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,20 +60,33 @@ public class AddPage extends BorderPage {
 						.getHttpServletRequest();
 				String ipaddress = httpRequest.getRemoteAddr();
 				PersistenceManager pm = PMF.get().getPersistenceManager();
+				String link = CommentHelper.genUrlPath(subject.getObject());
 				Comment comment = new Comment(id, subject.getObject(),
-						new Text(text.getObject()), name.getObject(), ipaddress);
+						new Text(text.getObject()), name.getObject(), ipaddress, link);
 				try {
 					//TODO store email and homepage
 					comment = pm.makePersistent(comment);
 
-					sendEmailToSelf(getString("borderpage.title")+": "
-							+ comment.getSubject(), comment.toString());
+					BlogApplication app = (BlogApplication) getApplication();
+					String urlPath = CommentHelper.getUrlPath(comment);
+					app.mountBlogPage(urlPath, ViewPage.class);
+
+					String adminEmail = getString("admin.email");
+					String adminName = getString("admin.name");
+					if (!adminName.equalsIgnoreCase(comment.getAuthor())
+							&& !adminEmail.equalsIgnoreCase(email.getObject() /*comment.getEmail()*/)) {
+						sendEmailToSelf(getString("borderpage.title")+": "
+								+ comment.getSubject(), comment.toString());
+					}
 					log.debug("Added/updated comment!");
 					if (Util.isEmpty(defsubject)) {
 						setResponsePage(new ListPage(id));
 					}else{
 						setResponsePage(new ViewPage(id));
 					}
+				} catch (BlogException e) {
+					log.error(e.getMessage(), e);
+					error("Duplicate subject!");
 				} finally {
 					pm.close();
 				}
@@ -93,19 +107,11 @@ public class AddPage extends BorderPage {
 				.add(StringValidator.maximumLength(100)));
 		update.add(new TextArea<String>("message", text).setRequired(true).add(
 				StringValidator.lengthBetween(2, 5000)));
-		update.add(new TextField<String>("name", name).setRequired(true).add(
-				StringValidator.maximumLength(100)).add(
-				new AbstractValidator<String>() {
-					@Override
-					protected void onValidate(IValidatable<String> validatable) {
-						String in = validatable.getValue();
-						String adminName = getString("admin.name");
-						if (in.toLowerCase().contains(adminName)) {
-							log.warn("Reserved name: "+in);
-							error(validatable, "reservedname.Validator");
-						}
-					}
-				}));
+		String adminEmail = getString("admin.email");
+		String adminName = getString("admin.name");
+		update.add(new TextField<String>("name", name).setRequired(true)
+				.add(StringValidator.maximumLength(100))
+				.add(new AdminNameValidator(adminName, adminEmail)));
 		update.add(new TextField<String>("email", email)
 				.add(EmailAddressValidator.getInstance()));
 		update.add(new TextField<String>("homepage", homepage)

@@ -40,18 +40,22 @@ public class Comment implements Serializable {
 	@Persistent
 	private Boolean hidden;
 
+	@Persistent
+	private String link;
+
 //	@Persistent
 //	@Element(dependent = "true")
 //	private List<Comment> comments;
 
 	public Comment(long parentid, String subject, Text text,
-			String author, String ipaddress) {
+			String author, String ipaddress, String link) {
 		this.parentid = parentid;
 		this.subject = subject;
 		this.text = text;
 		this.author = author;
 		date = new Date();
 		this.ipaddress = ipaddress;
+		this.link = link;
 	}
 	
 	@Override
@@ -64,6 +68,7 @@ public class Comment implements Serializable {
 		sb.append("\nauthor="+author);
 		sb.append("\nsubject="+subject);
 		sb.append("\ntext="+text);
+		sb.append("\nlink="+link);
 		return sb.toString();
 	}
 
@@ -125,6 +130,14 @@ public class Comment implements Serializable {
 
 	public void setHidden(Boolean hidden) {
 		this.hidden = hidden;
+	}
+
+	public String getLink() {
+		return link;
+	}
+
+	public void setLink(String link) {
+		this.link = link;
 	}
 
 }

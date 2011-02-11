@@ -1,24 +1,23 @@
 package org.gaewicketblog.wicket;
 
+import java.io.Serializable;
 import java.util.List;
-
-import javax.jdo.PersistenceManager;
-import javax.jdo.Query;
 
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.extensions.markup.html.basic.SmartLinkMultiLineLabel;
+import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
+import org.gaewicketblog.common.AppEngineHelper;
+import org.gaewicketblog.model.Comment;
+import org.gaewicketblog.model.CommentHelper;
+import org.gaewicketblog.wicket.common.DisqusCountPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.gaewicketblog.common.AppEngineHelper;
-import org.gaewicketblog.common.DbHelper;
-import org.gaewicketblog.common.PMF;
-import org.gaewicketblog.model.Comment;
 
 @SuppressWarnings("serial")
 public class ListPage extends BorderPage {
@@ -32,23 +31,23 @@ public class ListPage extends BorderPage {
 		log.debug("path="+path);
 		if(path.endsWith(Constants.NEWS_STR)){
 			id = Constants.NEWS;
-		}else if(path.endsWith(Constants.BUGS_STR)){
-			id = Constants.BUGS;
 		}else if(path.endsWith(Constants.FAQ_STR)){
 			id = Constants.FAQ;
 		}else if(path.endsWith(Constants.HELP_STR)){
 			id = Constants.HELP;
-		}else if(path.endsWith(Constants.FEATURE_STR)){
-			id = Constants.FEATURE;
+		}else if(path.endsWith(Constants.ISSUES_STR)){
+			id = Constants.ISSUES;
 		}else if(path.endsWith(Constants.ABOUT_STR)){
 			id = Constants.ABOUT;
 		}
-		init(id);
+		CommentProvider provider = new CommentProvider(id);
+		init(id, provider);
 	}
 
 	public ListPage(long id) {
 		super();
-		init(id);
+		CommentProvider provider = new CommentProvider(id);
+		init(id, provider);
 	}
 	
 	/**
@@ -57,119 +56,65 @@ public class ListPage extends BorderPage {
 	 */
 	public ListPage(List<Comment> comments){
 		super();
-		add(new Label("topic", getString("listpage.search.title")));
-		add(new Label("topicdesc", getString("listpage.search.results")));
-
 		FixedCommentProvider provider = new FixedCommentProvider(comments);
-		final DataView<Comment> dataView = new DataView<Comment>("sorting", provider) {
-			@Override
-			protected void populateItem(final Item<Comment> item) {
-				final Comment comment = item.getModelObject();
-				item.add(new Label("author", comment.getAuthor()));
-				item.add(new SmartLinkMultiLineLabel("text", comment.getText().getValue()));
-				item.add(new Label("date", ""+comment.getDate()));
-				item.add(new Label("comments", "-"));
-				item.add(new Link<String>("viewpost") {
-					@Override
-					public void onClick() {
-						setResponsePage(new ViewPage(item.getModel()));
-					}
-				}.add(new Label("subject", comment.getSubject())));
-				item.add(new Link<String>("reply") {
-					@Override
-					public void onClick() {}
-				}.setVisible(false));
-			}
-		};
-
-		dataView.setItemsPerPage(5);
-		provider.setSort("date", false);
-
-		add(dataView);
-
-		add(new PagingNavigator("navigator", dataView));
-		
-		//add (disabled)
-		add(new Link<String>("add1") {
-			@Override
-			public void onClick() {}
-		}.setVisible(false));
-		add(new Link<String>("add2") {
-			@Override
-			public void onClick() {}
-		}.setVisible(false));
+		init(Constants.SEARCH, provider);
 	}
-
-	private void init(final long id) {
+	
+	private void init(final long id, SortableDataProvider<Comment> provider) {
 		log.debug("ListPage<long> "+id);
-		boolean canPost;
+		final ListPageSettings settings;
 		switch((int)id){
-		case Constants.BUGS:
-			add(new Label("topic", getString("borderpage.li.bugs.title")));
-			add(new Label("topicdesc", getString("borderpage.li.bugs.description")));
-			canPost = true;
+		case Constants.SEARCH:
+			settings = new ListPageSettings(false, true,
+					getString("listpage.search.title"),
+					getString("listpage.search.results"));
 			break;
 		case Constants.FAQ:
-			add(new Label("topic", getString("borderpage.li.faq.title")));
-			add(new Label("topicdesc", getString("borderpage.li.faq.description")));
-			canPost = false;
+			settings = new ListPageSettings(false, true,
+					getString("borderpage.li.faq.title"),
+					getString("borderpage.li.faq.description"));
 			break;
 		case Constants.HELP:
-			add(new Label("topic", getString("borderpage.li.help.title")));
-			add(new Label("topicdesc", getString("borderpage.li.help.description")));
-			canPost = false;
+			settings = new ListPageSettings(false, true,
+					getString("borderpage.li.help.title"),
+					getString("borderpage.li.help.description"));
 			break;
-		case Constants.FEATURE:
-			add(new Label("topic", getString("borderpage.li.features.title")));
-			add(new Label("topicdesc", getString("borderpage.li.features.description")));
-			canPost = true;
+		case Constants.ISSUES:
+			settings = new ListPageSettings(true, false,
+					getString("borderpage.li.issues.title"),
+					getString("borderpage.li.issues.description"));
 			break;
 		case Constants.ABOUT:
-			add(new Label("topic", getString("borderpage.li.about.title")));
-			add(new Label("topicdesc", getString("borderpage.li.about.description")));
-			canPost = false;
+			settings = new ListPageSettings(false, true,
+					getString("borderpage.li.about.title"),
+					getString("borderpage.li.about.description"));
 			break;
-//			case Constants.NEWS:
-//			add(new Label("topic", getString("borderpage.li.news.title")));
-//			add(new Label("topicdesc", getString("borderpage.li.news.description")));
-//			canPost = false;
-//			break;
+//		case Constants.NEWS:
 		default:
-			add(new Label("topic", getString("borderpage.li.news.title")));
-			add(new Label("topicdesc", getString("borderpage.li.news.description")));
-			canPost = false;
+			settings = new ListPageSettings(false, true,
+					getString("borderpage.li.news.title"),
+					getString("borderpage.li.news.description"));
 		}
 
-		CommentProvider provider = new CommentProvider(id);
+		add(new Label("topic", settings.topic));
+		add(new Label("topicdesc", settings.topicdesc));
+
+		String adminemail = getString("admin.email");
+		boolean admin = AppEngineHelper.isAdmin(adminemail);
+
 		final DataView<Comment> dataView = new DataView<Comment>("sorting", provider) {
 			@Override
 			protected void populateItem(final Item<Comment> item) {
 				final Comment comment = item.getModelObject();
 				item.add(new Label("author", comment.getAuthor()));
-				item.add(new SmartLinkMultiLineLabel("text", comment.getText().getValue()));
+				item.add(new SmartLinkMultiLineLabel("text", comment.getText()
+						.getValue()).setVisible(settings.showText));
 				item.add(new Label("date", ""+comment.getDate()));
-				PersistenceManager pm = PMF.get().getPersistenceManager();
-				Query query = pm.newQuery(Comment.class, "parentid == "+comment.getId());
-				try{
-					int comments = DbHelper.count(query);
-					item.add(new Label("comments", ""+comments));
-				}finally{
-					pm.close();
-				}
-				item.add(new Link<String>("viewpost") {
-					@Override
-					public void onClick() {
-						setResponsePage(new ViewPage(item.getModel()));
-					}
-				}.add(new Label("subject", comment.getSubject())));
-				item.add(new Link<String>("reply") {
-					@Override
-					public void onClick() {
-						String re = getString("listpage.reply.prepend");
-						setResponsePage(new AddPage(comment.getId(), re
-								+ comment.getSubject()));
-					}
-				});
+				item.add(new ExternalLink("comments", CommentHelper
+						.getUrlPath(comment)+"#disqus_thread"));
+				item.add(new ExternalLink("viewpost", CommentHelper
+						.getUrlPath(comment)).add(new Label("subject", comment
+						.getSubject())));
 			}
 		};
 
@@ -179,8 +124,6 @@ public class ListPage extends BorderPage {
 		add(dataView);
 
 		add(new PagingNavigator("navigator", dataView));
-
-		boolean admin = AppEngineHelper.isAdmin();
 
 		//add
 		add(new Link<String>("add1") {
@@ -188,13 +131,31 @@ public class ListPage extends BorderPage {
 			public void onClick() {
 				setResponsePage(new AddPage(id, ""));
 			}
-		}.setVisible(canPost || admin));
+		}.setVisible(settings.canPost || admin));
 		add(new Link<String>("add2") {
 			@Override
 			public void onClick() {
 				setResponsePage(new AddPage(id, ""));
 			}
-		}.setVisible(canPost || admin));
+		}.setVisible(settings.canPost || admin));
+		//disqus/comments
+		add(new DisqusCountPanel("disqus"));
+
+		addSidebarPanel(new TocPanel(nextSidebarId(), provider));
+	}
+
+	private static class ListPageSettings implements Serializable {
+		private boolean canPost;
+		private boolean showText;
+		private String topic;
+		private String topicdesc;
+		public ListPageSettings(boolean canPost, boolean showText,
+				String topic, String topicdesc) {
+			this.canPost = canPost;
+			this.showText = showText;
+			this.topic = topic;
+			this.topicdesc = topicdesc;
+		}
 	}
 
 }
