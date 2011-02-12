@@ -31,8 +31,8 @@ public class ViewPage extends BorderPage {
 		if(comment == null){
 			log.error(getString("viewpage.error.commentnotfound")+" parentid="+parentid);
 			String error = getString("viewpage.error.error");
-			comment = new Comment(Constants.NEWS, error, new Text(error),
-					error, error, error);
+			comment = new Comment(-1, error, new Text(error), error, error,
+					error);
 		}
 		init(new Model<Comment>(comment));
 	}
@@ -50,8 +50,8 @@ public class ViewPage extends BorderPage {
 		if(comment == null){
 			log.error(getString("viewpage.error.commentnotfound")+" id="+id);
 			String error = getString("viewpage.error.error");
-			comment = new Comment(Constants.NEWS, error, new Text(error),
-					error, error, error);
+			comment = new Comment(-1, error, new Text(error), error, error,
+					error);
 		}
 		init(new Model<Comment>(comment));
 	}

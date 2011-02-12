@@ -43,7 +43,8 @@ public class SearchPanel extends Panel {
 							found.add(comment);
 						}
 					}
-					setResponsePage(new ListPage(found));
+					TopicSetting search = new TopicSetting(-1, "/", false, true, "Search", "Search");
+					setResponsePage(new ListPage(search, found));
 				}
 			}
 		};

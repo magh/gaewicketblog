@@ -40,11 +40,11 @@ public class AddPage extends BorderPage {
 	
 	private Random rand = new Random();
 
-	public AddPage(final long id, final String defsubject) {
+	public AddPage(final long parentid) {
 		super();
 
 		final IModel<String> captcha = new Model<String>();
-		final IModel<String> subject = new Model<String>(defsubject);
+		final IModel<String> subject = new Model<String>();
 		final IModel<String> text = new Model<String>();
 		final IModel<String> name = new Model<String>();
 		final IModel<String> email = new Model<String>();
@@ -61,7 +61,7 @@ public class AddPage extends BorderPage {
 				String ipaddress = httpRequest.getRemoteAddr();
 				PersistenceManager pm = PMF.get().getPersistenceManager();
 				String link = CommentHelper.genUrlPath(subject.getObject());
-				Comment comment = new Comment(id, subject.getObject(),
+				Comment comment = new Comment(parentid, subject.getObject(),
 						new Text(text.getObject()), name.getObject(), ipaddress, link);
 				try {
 					//TODO store email and homepage
@@ -79,11 +79,7 @@ public class AddPage extends BorderPage {
 								+ comment.getSubject(), comment.toString());
 					}
 					log.debug("Added/updated comment!");
-					if (Util.isEmpty(defsubject)) {
-						setResponsePage(new ListPage(id));
-					}else{
-						setResponsePage(new ViewPage(id));
-					}
+					setResponsePage(new ViewPage(parentid));
 				} catch (BlogException e) {
 					log.error(e.getMessage(), e);
 					error("Duplicate subject!");
@@ -119,11 +115,7 @@ public class AddPage extends BorderPage {
 		update.add(new Link<String>("cancel") {
 			@Override
 			public void onClick() {
-				if (Util.isEmpty(defsubject)) {
-					setResponsePage(new ListPage(id));
-				}else{
-					setResponsePage(new ViewPage(id));
-				}
+				setResponsePage(new ViewPage(parentid));
 			}
 		});
 //		update.add(new FeedbackLabel("feedback", update));

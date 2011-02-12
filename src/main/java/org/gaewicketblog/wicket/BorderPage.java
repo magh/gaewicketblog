@@ -44,22 +44,12 @@ public class BorderPage extends WebPage {
 		add(new Image("logo", "images/icon.png"));
 
 		RepeatingView headerMenu = new RepeatingView("headermenu");
-		addHeaderMenuLink(headerMenu, "/" + Constants.NEWS_STR,
-				getString("borderpage.li.news.title"),
-				getString("borderpage.li.news.description"));
-		addHeaderMenuLink(headerMenu, "/" + Constants.HELP_STR,
-				getString("borderpage.li.help.title"),
-				getString("borderpage.li.help.description"));
-		addHeaderMenuLink(headerMenu, "/" + Constants.FAQ_STR,
-				getString("borderpage.li.faq.title"),
-				getString("borderpage.li.faq.description"));
-		addHeaderMenuLink(headerMenu, "/" + Constants.ISSUES_STR,
-				getString("borderpage.li.issues.title"),
-				getString("borderpage.li.issues.description"));
-		addHeaderMenuLink(headerMenu, "/" + Constants.ABOUT_STR,
-				getString("borderpage.li.about.title"),
-				getString("borderpage.li.about.description"));
 		add(headerMenu);
+		BlogApplication app = (BlogApplication) getApplication();
+		for (TopicSetting topic : app.topics) {
+			addHeaderMenuLink(headerMenu, "/" + topic.path, topic.topic,
+					topic.topicdesc);
+		}
 
 		RepeatingView sidebar = new RepeatingView("sidebar");
 		add(sidebar);
