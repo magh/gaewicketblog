@@ -7,10 +7,9 @@ import org.gaewicketblog.common.Util;
 @SuppressWarnings("serial")
 public class DisqusCountPanel extends Panel {
 
-	public DisqusCountPanel(String id) {
+	public DisqusCountPanel(String id, String shortname) {
 		super(id);
 		StringBuilder sb = new StringBuilder();
-		String shortname = getString("disqus.shortname");
 		if(!Util.isEmpty(shortname)){
 			if(DisqusPanel.DEVELOPER){
 				sb.append("var disqus_developer = 1;\n"); // developer mode is on

@@ -2,7 +2,7 @@
 <datastore-indexes autoGenerate="true">
 	<datastore-index kind="Comment" ancestor="false" source="manual">
 		<property name="parentid" direction="asc"/>
-		<property name="date" direction="desc"/>
+		<property name="__key__" direction="desc"/>
 	</datastore-index>
 	<datastore-index kind="Comment" ancestor="false" source="manual">
 		<property name="parentid" direction="asc"/>
@@ -10,6 +10,22 @@
 	</datastore-index>
 	<datastore-index kind="Comment" ancestor="false" source="manual">
 		<property name="parentid" direction="asc"/>
-		<property name="__key__" direction="desc"/>
+		<property name="date" direction="desc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="subject" direction="asc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="subject" direction="desc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="author" direction="asc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="author" direction="desc"/>
 	</datastore-index>
 </datastore-indexes>

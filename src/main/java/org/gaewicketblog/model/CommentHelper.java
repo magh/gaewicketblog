@@ -38,8 +38,32 @@ public class CommentHelper {
 		@Override
 		public int compare(Comment arg0, Comment arg1) {
 			try{
-				return arg0.getText().getValue().compareTo(
-						arg1.getText().getValue());
+				return arg0.getText().getValue()
+						.compareToIgnoreCase(arg1.getText().getValue());
+			}catch(Exception e){
+				log.error(e.getMessage(), e);
+			}
+			return -1;
+		}
+	};
+
+	public static Comparator<Comment> bySubject = new Comparator<Comment>() {
+		@Override
+		public int compare(Comment arg0, Comment arg1) {
+			try{
+				return arg0.getSubject().compareToIgnoreCase(arg1.getSubject());
+			}catch(Exception e){
+				log.error(e.getMessage(), e);
+			}
+			return -1;
+		}
+	};
+
+	public static Comparator<Comment> byAuthor = new Comparator<Comment>() {
+		@Override
+		public int compare(Comment arg0, Comment arg1) {
+			try{
+				return arg0.getAuthor().compareToIgnoreCase(arg1.getAuthor());
 			}catch(Exception e){
 				log.error(e.getMessage(), e);
 			}

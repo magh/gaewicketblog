@@ -4,6 +4,7 @@ import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigationIncrementLink;
 import org.apache.wicket.markup.html.panel.Panel;
 
+@SuppressWarnings("serial")
 public class SimplePagingNavigator extends Panel {
 
 	private final IPageable pageable;

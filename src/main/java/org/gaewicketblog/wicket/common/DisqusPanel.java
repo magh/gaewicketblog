@@ -9,10 +9,9 @@ public class DisqusPanel extends Panel {
 	
 	public static boolean DEVELOPER = false;
 
-	public DisqusPanel(String id, String pid, String purl, String ptitle) {
+	public DisqusPanel(String id, String shortname, String pid, String purl, String ptitle) {
 		super(id);
 		StringBuilder sb = new StringBuilder();
-		String shortname = getString("disqus.shortname");
 		if(!Util.isEmpty(shortname)){
 			if(DEVELOPER){
 				sb.append("var disqus_developer = 1;\n"); // developer mode is on

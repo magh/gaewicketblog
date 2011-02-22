@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title><wicket:message key="borderpage.title">Title</wicket:message></title>
+		<meta name="description" wicket:message="content:borderpage.description">
+		<meta name="keywords" wicket:message="content:borderpage.keywords">
+		<link wicket:id="css" rel="stylesheet" type="text/css" />
+		<link wicket:message="title:borderpage.rsslink.title,href:borderpage.rsslink.href," rel="alternate" type="application/rss+xml">
+	</head><body>
+
+	<div id="wrapper">
+		<div id="header">
+	<div class="logo">
+		<a href="/"><img wicket:id="logo" class="logo-img" border="0" height="73" width="354" wicket:message="alt:borderpage.logo.alt"></a>
+	</div>
+	<div id="nav">
+		<ul><li wicket:id="headermenu"><a wicket:id="menulink" href="#">[HeaderMenu]</a></li></ul>
+	</div>
+</div>
+<div id="homepage">
+	<div id="maincontent">
+
+			<wicket:child/>
+
+	</div> <!-- #maincontent -->
+</div> <!-- #homepage -->
+
+		<div wicket:id="sidebar" id="sidebar">
+		</div> <!-- #sidebar -->
+
+		<div id="footer">
+			<p><wicket:message key="borderpage.copyright">Copyright - GaeWicketBlog - All Rights Reserved</wicket:message></p>
+			<p>Powered by <a href="http://gaewicketblog.appspot.com">gaewicketblog</a></p>
+		</div>
+	</div> <!-- #wrapper -->
+<link rel="icon" type="image/png" href="images/favicon.png">
+</body></html>
