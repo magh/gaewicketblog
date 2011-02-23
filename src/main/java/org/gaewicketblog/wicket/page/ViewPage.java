@@ -6,10 +6,14 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.WebRequest;
+import org.apache.wicket.request.target.basic.RedirectRequestTarget;
 import org.gaewicketblog.common.AppEngineHelper;
 import org.gaewicketblog.common.DbHelper;
 import org.gaewicketblog.common.Util;
 import org.gaewicketblog.model.Comment;
+import org.gaewicketblog.model.TopicSetting;
+import org.gaewicketblog.model.TopicSettingHelper;
+import org.gaewicketblog.wicket.application.BlogApplication;
 import org.gaewicketblog.wicket.common.DisqusPanel;
 import org.gaewicketblog.wicket.common.ImgSmartLinkMultiLineLabel;
 import org.slf4j.Logger;
@@ -63,6 +67,9 @@ public class ViewPage extends BorderPage {
 		add(new Label("author", comment.getAuthor()));
 		add(new Label("subject", comment.getSubject()));
 		add(new ImgSmartLinkMultiLineLabel("text", comment.getText().getValue()));
+		String note = comment.getNote() != null ? comment.getNote().getValue() : "";
+		add(new ImgSmartLinkMultiLineLabel("note", note).setVisible(!Util
+				.isEmpty(note)));
 		add(new Label("date", ""+comment.getDate()));
 
 		//edit
@@ -76,8 +83,20 @@ public class ViewPage extends BorderPage {
 		add(new Link<String>("delete"){
 			@Override
 			public void onClick() {
+				//TODO confirm
 				DbHelper.delete(comment);
-				setResponsePage(new ListPage(comment.getParentid()));
+				BlogApplication app = (BlogApplication) getApplication();
+				TopicSetting parent = TopicSettingHelper.getById(app.topics,
+						comment.getParentid());
+				String parentpath;
+				if(parent == null) {
+					log.warn("no parent path for parentid: "+comment.getParentid());
+					parentpath = "/";
+				}else{
+					parentpath = "/" + parent.path;
+				}
+				getRequestCycle().setRequestTarget(
+						new RedirectRequestTarget(parentpath));
 			}
 		}.setVisible(admin));
 		//disqus/comments

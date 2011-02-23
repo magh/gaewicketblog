@@ -9,6 +9,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.gaewicketblog.common.AppEngineHelper;
 import org.gaewicketblog.common.DbHelper;
 import org.gaewicketblog.common.Util;
 import org.gaewicketblog.model.Comment;
@@ -31,6 +32,9 @@ public class UpdatePage extends BorderPage {
 
 		final IModel<String> subject = new Model<String>(comment.getSubject());
 		final IModel<String> text = new Model<String>(comment.getText().getValue());
+		Text noteText = comment.getNote();
+		final IModel<String> note = new Model<String>(
+				noteText != null ? noteText.getValue() : "");
 		final IModel<String> name = new Model<String>(comment.getAuthor());
 		final IModel<String> email = new Model<String>(); //TODO is email stored?
 		final IModel<String> homepage = new Model<String>(); //TODO is homepage stored?
@@ -41,15 +45,15 @@ public class UpdatePage extends BorderPage {
 				try {
 					comment.setSubject(subject.getObject());
 					comment.setText(new Text(text.getObject()));
+					comment.setNote(new Text(note.getObject()));
 					comment.setAuthor(name.getObject());
 					if(Util.isEmpty(comment.getLink())) {
 						comment.setLink(CommentHelper.genUrlPath(subject.getObject()));
-
 						BlogApplication app = (BlogApplication) getApplication();
 						String urlPath = CommentHelper.getUrlPath(comment);
 						app.mountBlogPage(urlPath, ViewPage.class);
 					}
-					//TODO
+					//TODO set email and homepage
 //					comment.setEmail(email.getObject());
 //					comment.setHomepage(homepage.getObject());
 					DbHelper.merge(comment);
@@ -66,6 +70,8 @@ public class UpdatePage extends BorderPage {
 				StringValidator.lengthBetween(2, 5000)));
 		String adminEmail = getString("admin.email");
 		String adminName = getString("admin.name");
+		update.add(new TextArea<String>("note", note)
+				.setVisible(AppEngineHelper.isAdmin(adminEmail)));
 		update.add(new TextField<String>("name", name).setRequired(true)
 				.add(StringValidator.maximumLength(100))
 				.add(new AdminNameValidator(adminName, adminEmail)));

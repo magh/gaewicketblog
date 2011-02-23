@@ -69,12 +69,12 @@ public class AddPage extends BorderPage {
 				Comment comment = new Comment(parent.id, subject.getObject(),
 						new Text(text.getObject()), name.getObject(), ipaddress, link);
 				try {
-					//TODO store email and homepage
-					comment = pm.makePersistent(comment);
-
 					BlogApplication app = (BlogApplication) getApplication();
 					String urlPath = CommentHelper.getUrlPath(comment);
 					app.mountBlogPage(urlPath, ViewPage.class);
+
+					//TODO store email and homepage
+					comment = pm.makePersistent(comment);
 
 					String adminEmail = getString("admin.email");
 					String adminName = getString("admin.name");

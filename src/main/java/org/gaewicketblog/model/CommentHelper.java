@@ -116,4 +116,27 @@ public class CommentHelper {
 		return in.replaceAll("[\\,/,?,:,\",*,<,>,|,\\',\\’,\\‘]", "");
 	}
 
+	public static String getStatusAsString(Integer status){
+		switch(status){
+		case Comment.STATUS_OPEN_NEEDSINFO:
+			return "NI";
+		case Comment.STATUS_OPEN_UNDERREVIEW:
+			return "UR";
+		case Comment.STATUS_OPEN_PLANNED:
+			return "P";
+		case Comment.STATUS_OPEN_STARTED:
+			return "S";
+		case Comment.STATUS_CLOSED_COMPLETED:
+			return "C";
+		case Comment.STATUS_CLOSED_DECLINED:
+			return "D";
+		case Comment.STATUS_CLOSED_DUPLICATE:
+			return "DU";
+		case Comment.STATUS_NOSTATUS:
+			return "W";
+		default:
+			return "W";
+		}
+	}
+
 }

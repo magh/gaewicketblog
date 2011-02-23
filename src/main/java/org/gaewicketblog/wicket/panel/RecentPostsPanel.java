@@ -11,15 +11,15 @@ import org.gaewicketblog.model.Comment;
 import org.gaewicketblog.model.CommentHelper;
 
 @SuppressWarnings("serial")
-public class TocPanel extends Panel {
+public class RecentPostsPanel extends Panel {
 	
-	private final static int MAX = 30;
+	private final static int MAX = 15;
 
-	public TocPanel(String id, SortableDataProvider<Comment> provider) {
+	public RecentPostsPanel(String id, SortableDataProvider<Comment> provider) {
 		super(id);
 		RepeatingView posts = new RepeatingView("posts");
 		add(posts);
-		
+
 		int size = provider.size();
 		Iterator<? extends Comment> iterator = provider.iterator(0, size > MAX ? MAX : size);
 		for (Iterator<? extends Comment> it = iterator; it.hasNext();) {
@@ -29,6 +29,8 @@ public class TocPanel extends Panel {
 							CommentHelper.getUrlPath(comment), comment
 									.getSubject())));
 		}
+
+		setVisible(size > 0);
 	}
 
 }

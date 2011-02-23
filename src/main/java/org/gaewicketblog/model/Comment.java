@@ -14,34 +14,74 @@ import com.google.appengine.api.datastore.Text;
 @SuppressWarnings("serial")
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class Comment implements Serializable {
+	
+	/** Status of post. */
+	public final static int STATUS_NOSTATUS = 0;
+	public final static int STATUS_OPEN_UNDERREVIEW = 1;
+	public final static int STATUS_OPEN_PLANNED = 2;
+	public final static int STATUS_OPEN_STARTED = 3;
+	public final static int STATUS_OPEN_NEEDSINFO = 4;
+	public final static int STATUS_CLOSED_COMPLETED = 5;
+	public final static int STATUS_CLOSED_DECLINED = 6;
+	public final static int STATUS_CLOSED_DUPLICATE = 7;
 
+	/** Type of post. */
+	public final static int TYPE_NOTYPE = 0;
+	public final static int TYPE_ENHANCEMENT = 1;
+	public final static int TYPE_DEFECT = 2;
+
+	/** Post id. */
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long id;
 
+	/** Topic id or parent post id. */
 	@Persistent
 	private Long parentid;
 
+	/** Post subject. */
 	@Persistent
 	private String subject;
 
+	/** Post content. */
 	@Persistent
 	private Text text;
 
+	/** Post author. */
 	@Persistent
 	private String author;
 
+	/** Post date. */
 	@Persistent
 	private Date date;
 
+	/** Posters ip address. */
 	@Persistent
 	private String ipaddress;
 
+	/** ? */
 	@Persistent
 	private Boolean hidden;
 
+	/** RESTful link. */
 	@Persistent
 	private String link;
+
+	/** Post/Issue status. */
+	@Persistent
+	private Integer status;
+
+	/** User votes. */
+	@Persistent
+	private Integer votes;
+
+	/** Type of post. */
+	@Persistent
+	private Integer type;
+
+	/** Admin comment to post. */
+	@Persistent
+	private Text note;
 
 //	@Persistent
 //	@Element(dependent = "true")
@@ -56,6 +96,9 @@ public class Comment implements Serializable {
 		date = new Date();
 		this.ipaddress = ipaddress;
 		this.link = link;
+		status = STATUS_NOSTATUS;
+		type = TYPE_NOTYPE;
+		votes = 0;
 	}
 	
 	@Override
@@ -69,6 +112,10 @@ public class Comment implements Serializable {
 		sb.append("\nsubject="+subject);
 		sb.append("\ntext="+text);
 		sb.append("\nlink="+link);
+		sb.append("\n=status"+status);
+		sb.append("\n=type"+type);
+		sb.append("\n=starred"+votes);
+		sb.append("\n=note"+note);
 		return sb.toString();
 	}
 
@@ -138,6 +185,38 @@ public class Comment implements Serializable {
 
 	public void setLink(String link) {
 		this.link = link;
+	}
+
+	public Integer getStatus() {
+		return status != null ? status : STATUS_NOSTATUS;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public Integer getVotes() {
+		return votes != null ? votes : 0;
+	}
+
+	public void setVotes(Integer votes) {
+		this.votes = votes;
+	}
+
+	public Integer getType() {
+		return type != null ? type : TYPE_NOTYPE;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
+	public Text getNote() {
+		return note;
+	}
+
+	public void setNote(Text note) {
+		this.note = note;
 	}
 
 }

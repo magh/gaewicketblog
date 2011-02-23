@@ -28,4 +28,28 @@
 		<property name="parentid" direction="asc"/>
 		<property name="author" direction="desc"/>
 	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="votes" direction="asc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="votes" direction="desc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="status" direction="asc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="status" direction="desc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="type" direction="asc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="type" direction="desc"/>
+	</datastore-index>
 </datastore-indexes>

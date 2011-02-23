@@ -65,7 +65,10 @@ public class BlogApplication extends WebApplication {
 				List<Comment> comments = DbHelper.getComments(topic.id, pm);
 				for (Comment comment : comments) {
 					String urlPath = CommentHelper.getUrlPath(comment);
-					mountBlogPage(urlPath, ViewPage.class);
+					//TODO check all topic paths, not just current
+					if(!topic.path.equals(urlPath)){
+						mountBlogPage(urlPath, ViewPage.class);
+					}
 				}
 			}
 		} catch (BlogException e) {

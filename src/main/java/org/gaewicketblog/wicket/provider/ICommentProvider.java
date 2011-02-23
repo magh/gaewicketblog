@@ -9,5 +9,8 @@ public interface ICommentProvider extends Serializable {
 	public static final String SORT_TEXT = "text";
 	public static final String SORT_SUBJECT = "subject";
 	public static final String SORT_AUTHOR = "author";
+	public static final String SORT_STATUS = "status";
+	public static final String SORT_VOTES = "votes";
+	public static final String SORT_TYPE = "type";
 
 }
