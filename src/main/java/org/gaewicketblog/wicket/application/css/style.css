@@ -118,6 +118,14 @@ img.center {
 	float: left;
 }
 
+#login {
+	float: right;
+	font-size: 8pt;
+	padding-top: 5px;
+	padding-right: 5px;
+	text-decoration: none;
+}
+
 /* 
 	Wrapper
 */
@@ -474,49 +482,151 @@ tr.section td {
 	padding-top: 0.75em;
 }
 
-/*****************************************************************/
+/* ------------------------------------------ */
+.status {
+color: #fff !important;
+font-size: 9px;
+font-weight: bold;
+letter-spacing: 0;
+padding: 3px;      
+-webkit-border-radius: 0.5em;
+-moz-border-radius: 0.5em}
+
+.white { background-color: #fff; }
+.black { background-color: #000; }
+.grey { background-color: #ccc; }
+.red { background-color: #f00; }
+.green { background-color: #0f0; }
+.blue { background-color: #00f; }
+.yellow { background-color: #ff0; }
+.orange { background-color: #f80; }
+.magenta { background-color: #0ff; }
+.purple { background-color: #f0f; }
+
+/* ------------------------------------------
+PURE CSS SPEECH BUBBLES
+by Nicolas Gallagher
+- http://nicolasgallagher.com/pure-css-speech-bubbles/
+
+http://nicolasgallagher.com
+http://twitter.com/necolas
+
+Created: 02 March 2010
+Version: 1.1 (21 October 2010)
+
+Dual licensed under MIT and GNU GPLv2 © Nicolas Gallagher 
+------------------------------------------ */
+
+/* THE SPEECH BUBBLE
+------------------------------------------------------------------------------------------------------------------------------- */
 .triangle-border {
-	position: relative;
-	padding-top: 15px;
-	padding-right: 15px;
-	padding-bottom: 15px;
-	padding-left: 15px;
-	margin-top: 1em;
-	margin-right: 0pt;
-	margin-bottom: 3em;
-	margin-left: 0pt;
-	border-top-width: 5px;
-	border-right-width-value: 5px;
-	border-right-width-ltr-source: physical;
-	border-right-width-rtl-source: physical;
-	border-bottom-width: 5px;
-	border-left-width-value: 5px;
-	border-left-width-ltr-source: physical;
-	border-left-width-rtl-source: physical;
-	border-top-style: solid;
-	border-right-style-value: solid;
-	border-right-style-ltr-source: physical;
-	border-right-style-rtl-source: physical;
-	border-bottom-style: solid;
-	border-left-style-value: solid;
-	border-left-style-ltr-source: physical;
-	border-left-style-rtl-source: physical;
-	border-top-color: #5a8f00;
-	border-right-color-value: #5a8f00;
-	border-right-color-ltr-source: physical;
-	border-right-color-rtl-source: physical;
-	border-bottom-color: #5a8f00;
-	border-left-color-value: #5a8f00;
-	border-left-color-ltr-source: physical;
-	border-left-color-rtl-source: physical;
-	color: #333333;
-	background-color: #ffffff;
-	background-image: none;
-	background-repeat: repeat;
-	background-attachment: scroll;
-	background-position: 0% 0%;
+	position:relative;
+	padding:15px;
+	margin:1em 0 3em;
+	border:5px solid #5a8f00;
+	color:#333;
+	background:#fff;
+	
+	/* css3 */
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+	border-radius:10px;
+}
+/* Variant : for left positioned triangle
+------------------------------------------ */
+.triangle-border.left {
+	margin-left:30px;
+}
+/* Variant : for right positioned triangle
+------------------------------------------ */
+.triangle-border.right {
+	margin-right:30px;
+}
+/* THE TRIANGLE
+------------------------------------------------------------------------------------------------------------------------------- */
+.triangle-border:before {
+	content:"";
+	display:block; /* reduce the damage in FF3.0 */
+	position:absolute;
+	bottom:-40px; /* value = - border-top-width - border-bottom-width */
+	left:40px; /* controls horizontal position */
+	width:0;
+	height:0;
+	border:20px solid transparent;
+	border-top-color:#5a8f00;
+}
+/* creates the smaller  triangle */
+.triangle-border:after {
+	content:"";
+	display:block; /* reduce the damage in FF3.0 */
+	position:absolute;
+	bottom:-26px; /* value = - border-top-width - border-bottom-width */
+	left:47px; /* value = (:before left) + (:before border-left) - (:after border-left) */
+	width:0;
+	height:0;
+	border:13px solid transparent;
+	border-top-color:#fff;
+}
+/* Variant : top
+------------------------------------------ */
+/* creates the larger triangle */
+.triangle-border.top:before {
+	top:-40px; /* value = - border-top-width - border-bottom-width */
+	right:40px; /* controls horizontal position */
+	bottom:auto;
+	left:auto;
+	border:20px solid transparent;
+	border-bottom-color:#5a8f00;
+}
+/* creates the smaller  triangle */
+.triangle-border.top:after {
+	top:-26px; /* value = - border-top-width - border-bottom-width */
+	right:47px; /* value = (:before right) + (:before border-right) - (:after border-right) */
+	bottom:auto;
+	left:auto;
+	border:13px solid transparent;
+	border-bottom-color:#fff;
+}
+/* Variant : left
+------------------------------------------ */
+/* creates the larger triangle */
+.triangle-border.left:before {
+	top:10px; /* controls vertical position */
+	left:-30px; /* value = - border-left-width - border-right-width */
+	bottom:auto;
+	border-width:15px 30px 15px 0;
+	border-style:solid;
+	border-color:transparent #5a8f00;
+}
+/* creates the smaller  triangle */
+.triangle-border.left:after {
+	top:16px; /* value = (:before top) + (:before border-top) - (:after border-top) */
+	left:-21px; /* value = - border-left-width - border-right-width */
+	bottom:auto;
+	border-width:9px 21px 9px 0;
+	border-style:solid;
+	border-color:transparent #fff;
+}
+/* Variant : right
+------------------------------------------ */
+/* creates the larger triangle */
+.triangle-border.right:before {
+	top:10px; /* controls vertical position */
+	right:-30px; /* value = - border-left-width - border-right-width */
+	bottom:auto;
+    left:auto;
+	border-width:15px 0 15px 30px;
+	border-style:solid;
+	border-color:transparent #5a8f00;
+}
+/* creates the smaller  triangle */
+.triangle-border.right:after {
+	top:16px; /* value = (:before top) + (:before border-top) - (:after border-top) */
+	right:-21px; /* value = - border-left-width - border-right-width */
+	bottom:auto;
+    left:auto;
+	border-width:9px 0 9px 21px;
+	border-style:solid;
+	border-color:transparent #fff;
 }
 
-.triangle-border.right {
-	margin-right: 30px;
-}

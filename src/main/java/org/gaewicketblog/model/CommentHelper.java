@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.Model;
 import org.gaewicketblog.common.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +17,45 @@ public class CommentHelper {
 	private final static Logger log = LoggerFactory.getLogger(CommentHelper.class);
 
 //	private final static SimpleDateFormat DATEFORMAT = new SimpleDateFormat("yyyy-MM-dd ");
+	
+	private final static String STATUS_PREFIX = "comment.status";
+	private final static String STATUS_SUFFIX = ".title";
+
+	public static String getStatusString(Component context, int status){
+		return context.getString(CommentHelper.STATUS_PREFIX + status
+				+ CommentHelper.STATUS_SUFFIX);
+	}
+
+	public static Component newStatusColorLabel(Component context, String id,
+			int status) {
+		String text = getStatusString(context, status);
+		return new Label(id, text).add(new AttributeModifier("class", true,
+				new Model<String>("status "
+						+ CommentHelper.getStatusColorClass(status))));
+	}
+
+	private static String getStatusColorClass(int status){
+		switch(status){
+		case Comment.STATUS_UNASSIGNED:
+			return "grey";
+		case Comment.STATUS_OPEN_NEEDSINFO:
+			return "orange";
+		case Comment.STATUS_OPEN_UNDERREVIEW:
+			return "purple";
+		case Comment.STATUS_OPEN_STARTED:
+			return "magenta";
+		case Comment.STATUS_CLOSED_COMPLETED:
+			return "blue";
+		case Comment.STATUS_CLOSED_DECLINED:
+			return "red";
+		case Comment.STATUS_CLOSED_DUPLICATE:
+			return "black";
+		case Comment.STATUS_CLOSED_PENDING:
+			return "green";
+		}
+		log.warn("getStatusColorClass: Invalid status="+status);
+		return "white";
+	}
 
 	public static Comparator<Comment> byDate = new Comparator<Comment>() {
 		@Override
@@ -114,29 +157,6 @@ public class CommentHelper {
 
 	public static String escape(String in) {
 		return in.replaceAll("[\\,/,?,:,\",*,<,>,|,\\',\\’,\\‘]", "");
-	}
-
-	public static String getStatusAsString(Integer status){
-		switch(status){
-		case Comment.STATUS_OPEN_NEEDSINFO:
-			return "NI";
-		case Comment.STATUS_OPEN_UNDERREVIEW:
-			return "UR";
-		case Comment.STATUS_OPEN_PLANNED:
-			return "P";
-		case Comment.STATUS_OPEN_STARTED:
-			return "S";
-		case Comment.STATUS_CLOSED_COMPLETED:
-			return "C";
-		case Comment.STATUS_CLOSED_DECLINED:
-			return "D";
-		case Comment.STATUS_CLOSED_DUPLICATE:
-			return "DU";
-		case Comment.STATUS_NOSTATUS:
-			return "W";
-		default:
-			return "W";
-		}
 	}
 
 }

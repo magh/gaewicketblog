@@ -49,8 +49,8 @@
     <file name="org/apache/httpcomponents/httpclient/4.0.1/httpclient-4.0.1.jar" />
     <file name="org/apache/httpcomponents/httpcore/4.0.1/httpcore-4.0.1.jar" />
     <file name="org/apache/httpcomponents/httpmime/4.0.1/httpmime-4.0.1.jar" />
-    <file name="org/json/json/20090211/json-20090211.jar" />
 -->
+    <file name="org/json/json/20090211/json-20090211.jar" />
     <file name="org/slf4j/slf4j-api/1.5.11/slf4j-api-1.5.11.jar" />
     <file name="org/slf4j/slf4j-jdk14/1.5.11/slf4j-jdk14-1.5.11.jar" />
     <file name="org/apache/wicket/wicket/1.4.9/wicket-1.4.9.jar" />

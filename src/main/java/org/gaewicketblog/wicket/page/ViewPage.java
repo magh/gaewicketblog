@@ -1,6 +1,5 @@
 package org.gaewicketblog.wicket.page;
 
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
@@ -10,7 +9,9 @@ import org.apache.wicket.request.target.basic.RedirectRequestTarget;
 import org.gaewicketblog.common.AppEngineHelper;
 import org.gaewicketblog.common.DbHelper;
 import org.gaewicketblog.common.Util;
+import org.gaewicketblog.common.WicketHelper;
 import org.gaewicketblog.model.Comment;
+import org.gaewicketblog.model.CommentHelper;
 import org.gaewicketblog.model.TopicSetting;
 import org.gaewicketblog.model.TopicSettingHelper;
 import org.gaewicketblog.wicket.application.BlogApplication;
@@ -42,8 +43,7 @@ public class ViewPage extends BorderPage {
 	}
 
 	public ViewPage() {
-		String path = RequestCycle.get().getRequest().getPath();
-		log.debug("<init> path="+path);
+		String path = WicketHelper.getCurrentRestfulPath();
 		long id = Util.parseLong(path, -1);
 		Comment comment;
 		if(id == -1){
@@ -61,8 +61,6 @@ public class ViewPage extends BorderPage {
 	}
 
 	public void init(IModel<Comment> commentModel) {
-		String adminemail = getString("admin.email");
-		final boolean admin = AppEngineHelper.isAdmin(adminemail);
         final Comment comment = commentModel.getObject();
 		add(new Label("author", comment.getAuthor()));
 		add(new Label("subject", comment.getSubject()));
@@ -72,13 +70,22 @@ public class ViewPage extends BorderPage {
 				.isEmpty(note)));
 		add(new Label("date", ""+comment.getDate()));
 
+		Integer status = comment.getStatus();
+		boolean showStatus = status != null && status != Comment.STATUS_UNASSIGNED;
+		add(CommentHelper.newStatusColorLabel(this, "status", status)
+				.setVisible(showStatus));
+
+		String adminemail = getString("admin.email");
+		boolean canedit = AppEngineHelper.isCurrentUser(new String[] {
+				adminemail, comment.getEmail() });
+
 		//edit
 		add(new Link<String>("edit"){
 			@Override
 			public void onClick() {
 				setResponsePage(new UpdatePage(comment));
 			}
-		}.setVisible(admin));
+		}.setVisible(canedit));
 		//delete
 		add(new Link<String>("delete"){
 			@Override
@@ -98,7 +105,7 @@ public class ViewPage extends BorderPage {
 				getRequestCycle().setRequestTarget(
 						new RedirectRequestTarget(parentpath));
 			}
-		}.setVisible(admin));
+		}.setVisible(canedit));
 		//disqus/comments
 		String uri = ((WebRequest) getRequest()).getHttpServletRequest()
 				.getRequestURL().toString();

@@ -6,8 +6,10 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.ExternalLink;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.resources.StyleSheetReference;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
@@ -18,6 +20,11 @@ import org.gaewicketblog.wicket.application.BlogApplication;
 import org.gaewicketblog.wicket.panel.ContactPanel;
 import org.gaewicketblog.wicket.panel.SearchPanel;
 
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+
+@SuppressWarnings("serial")
 public class BorderPage extends WebPage {
 
 	public BorderPage() {
@@ -56,6 +63,17 @@ public class BorderPage extends WebPage {
 			addHeaderMenuLink(headerMenu, "/" + topic.path, topic.topic,
 					topic.topicdesc);
 		}
+		
+		//user/login
+		UserService userService = UserServiceFactory.getUserService();
+        User user = userService.getCurrentUser();
+        final String url = getRequest().getURL();
+		add(new Link<Void>("loginlink"){
+			@Override
+			public void onClick() {
+				LoginPage.redirectToLogin(this, url);
+			}
+		}.add(new Label("logintext", user != null ? "logout " : "login")));
 
 		RepeatingView sidebar = new RepeatingView("sidebar");
 		add(sidebar);

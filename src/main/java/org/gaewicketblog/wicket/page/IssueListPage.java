@@ -3,8 +3,6 @@ package org.gaewicketblog.wicket.page;
 import java.text.SimpleDateFormat;
 
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.Component;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.OrderByBorder;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
@@ -14,14 +12,15 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.gaewicketblog.common.AppEngineHelper;
+import org.gaewicketblog.common.WicketHelper;
 import org.gaewicketblog.model.Comment;
 import org.gaewicketblog.model.CommentHelper;
 import org.gaewicketblog.model.TopicSetting;
 import org.gaewicketblog.model.TopicSettingHelper;
 import org.gaewicketblog.wicket.application.BlogApplication;
-import org.gaewicketblog.wicket.common.DisqusCountPanel;
 import org.gaewicketblog.wicket.common.SimplePagingNavigator;
 import org.gaewicketblog.wicket.panel.RecentPostsPanel;
+import org.gaewicketblog.wicket.panel.StatusDescriptionPanel;
 import org.gaewicketblog.wicket.provider.DatabaseCommentProvider;
 import org.gaewicketblog.wicket.provider.ICommentProvider;
 import org.slf4j.Logger;
@@ -36,8 +35,7 @@ public class IssueListPage extends BorderPage {
 
 	public IssueListPage() {
 		super();
-		String path = RequestCycle.get().getRequest().getPath();
-		log.debug("path="+path);
+		String path = WicketHelper.getCurrentRestfulPath();
 		BlogApplication app = (BlogApplication) getApplication();
 		TopicSetting setting = TopicSettingHelper.getByPath(app.topics, path);
 		DatabaseCommentProvider provider = new DatabaseCommentProvider(setting.id);
@@ -67,22 +65,27 @@ public class IssueListPage extends BorderPage {
 		log.debug("ListPage<long> "+setting);
 
 		add(new Label("topic", setting.topic));
-		add(new Label("topicdesc", setting.topicdesc));
+		add(new Link<Void>("topicdescaddlink"){
+			@Override
+			public void onClick() {
+				setResponsePage(new AddPage(setting, getString("issuelistpage.post")));
+			}
+		}.add(new Label("topicdesc", setting.topicdesc)));
 
 		String adminemail = getString("admin.email");
-		boolean admin = AppEngineHelper.isAdmin(adminemail);
+		boolean admin = AppEngineHelper.isCurrentUser(adminemail);
 
 		final DataView<Comment> dataView = new DataView<Comment>("sorting", provider) {
 			@Override
 			protected void populateItem(final Item<Comment> item) {
 				final Comment comment = item.getModelObject();
-				item.add(new Label("status", CommentHelper
-						.getStatusAsString(comment.getStatus())));
+				Integer status = comment.getStatus();
+				item.add(CommentHelper.newStatusColorLabel(this, "status",
+						status));
 				item.add(new Label("votes", ""+comment.getVotes()));
 				item.add(new Label("author", comment.getAuthor()));
 				item.add(new Label("date", DATEFORMAT.format(comment.getDate())));
-				item.add(new ExternalLink("comments", CommentHelper
-						.getUrlPath(comment)+"#disqus_thread"));
+				item.add(new Label("comments", ""+comment.getComments()));
 				item.add(new ExternalLink("viewpost", CommentHelper
 						.getUrlPath(comment)).add(new Label("subject", comment
 						.getSubject())));
@@ -97,18 +100,20 @@ public class IssueListPage extends BorderPage {
 			}
 		};
 
-		dataView.setItemsPerPage(20);
+		dataView.setItemsPerPage(15);
 		provider.setSort(ICommentProvider.SORT_DATE, false);
 
 		add(newOrderByBorder("orderByStatus", ICommentProvider.SORT_STATUS,
-				provider, dataView));
-		add(newOrderByBorder("orderByVotes", ICommentProvider.SORT_VOTES,
 				provider, dataView));
 		add(newOrderByBorder("orderBySubject", ICommentProvider.SORT_SUBJECT,
 				provider, dataView));
 		add(newOrderByBorder("orderByAuthor", ICommentProvider.SORT_AUTHOR,
 				provider, dataView));
 		add(newOrderByBorder("orderByDate", ICommentProvider.SORT_DATE,
+				provider, dataView));
+		add(newOrderByBorder("orderByVotes", ICommentProvider.SORT_VOTES,
+				provider, dataView));
+		add(newOrderByBorder("orderByComments", ICommentProvider.SORT_COMMENTS,
 				provider, dataView));
 
 		add(dataView);
@@ -122,22 +127,22 @@ public class IssueListPage extends BorderPage {
 				setResponsePage(new AddPage(setting, getString("issuelistpage.post")));
 			}
 		}.setVisible(setting.canPost || admin));
-		//disqus/comments
-		String shortname = getString("disqus.shortname");
-		add(new DisqusCountPanel("disqus", shortname));
 
 		addSidebarPanel(new RecentPostsPanel(nextSidebarId(), provider));
+		addSidebarPanel(new StatusDescriptionPanel(nextSidebarId()));
 	}
 
-	private static Component newOrderByBorder(String id, String sort,
+	private static OrderByBorder newOrderByBorder(String id, String sort,
 			SortableDataProvider<Comment> provider,
 			final DataView<Comment> dataView) {
-		return new OrderByBorder(id, sort, provider) {
+		OrderByBorder order = new OrderByBorder(id, sort, provider) {
 			@Override
 			protected void onSortChanged() {
 				dataView.setCurrentPage(0);
 			}
-		}.setVersioned(false);
+		};
+		order.setVersioned(false);
+		return order;
 	}
 
 }

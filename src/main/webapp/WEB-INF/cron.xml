@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cronentries>
+  <cron>
+    <url>/disquscron</url>
+    <description>Disqus cron job</description>
+    <schedule>every 1 hours</schedule>
+    <timezone>America/New_York</timezone>
+  </cron>
+</cronentries>

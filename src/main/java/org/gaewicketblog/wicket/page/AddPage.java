@@ -1,5 +1,7 @@
 package org.gaewicketblog.wicket.page;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
@@ -12,6 +14,8 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.ChoiceRenderer;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
@@ -25,6 +29,7 @@ import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.validator.AbstractValidator;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.gaewicketblog.common.AppEngineHelper;
 import org.gaewicketblog.common.PMF;
 import org.gaewicketblog.common.Util;
 import org.gaewicketblog.model.Comment;
@@ -37,6 +42,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.appengine.api.datastore.Text;
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.repackaged.com.google.common.base.Pair;
 
 @SuppressWarnings("serial")
 public class AddPage extends BorderPage {
@@ -54,9 +63,19 @@ public class AddPage extends BorderPage {
 		final IModel<String> name = new Model<String>();
 		final IModel<String> email = new Model<String>();
 		final IModel<String> homepage = new Model<String>();
+		final IModel<String> note = new Model<String>();
+		final IModel<Pair<Integer, String>> status = new Model<Pair<Integer, String>>();
+		final IModel<Integer> votes = new Model<Integer>();
 		
 		final int a = rand.nextInt(10);
 		final int b = rand.nextInt(10);
+
+		UserService userService = UserServiceFactory.getUserService();
+        User user = userService.getCurrentUser();
+        if(user != null){
+        	email.setObject(user.getEmail());
+        	name.setObject(user.getNickname());
+        }
 
 		Form<String> update = new Form<String>("update") {
 			@Override
@@ -68,20 +87,32 @@ public class AddPage extends BorderPage {
 				String link = CommentHelper.genUrlPath(subject.getObject());
 				Comment comment = new Comment(parent.id, subject.getObject(),
 						new Text(text.getObject()), name.getObject(), ipaddress, link);
+				comment.setEmail(email.getObject());
+				comment.setHomepage(homepage.getObject());
+				//admin fields
+				String noteStr = note.getObject();
+				comment.setNote(noteStr != null ? new Text(noteStr) : null);
+				comment.setVotes(votes.getObject());
+				Pair<Integer, String> statusVal = status.getObject();
+				if(statusVal != null){
+					comment.setStatus(statusVal.first);
+				}
 				try {
 					BlogApplication app = (BlogApplication) getApplication();
 					String urlPath = CommentHelper.getUrlPath(comment);
 					app.mountBlogPage(urlPath, ViewPage.class);
 
-					//TODO store email and homepage
 					comment = pm.makePersistent(comment);
 
 					String adminEmail = getString("admin.email");
 					String adminName = getString("admin.name");
 					if (!adminName.equalsIgnoreCase(comment.getAuthor())
 							&& !adminEmail.equalsIgnoreCase(email.getObject() /*comment.getEmail()*/)) {
-						sendEmailToSelf(getString("borderpage.title")+": "
-								+ comment.getSubject(), comment.toString());
+						String emailSelfEmail = getString("emailself.email");
+						String emailSelfName = getString("emailself.name");
+						sendEmailToSelf(getString("borderpage.title") + ": "
+								+ comment.getSubject(), comment.toString(),
+								emailSelfName, emailSelfEmail);
 					}
 					log.debug("Added/updated comment!");
 					setResponsePage(new ViewPage(comment.getId()));
@@ -93,6 +124,8 @@ public class AddPage extends BorderPage {
 				}
 			}
 		};
+		add(update);
+
 		update.add(new Label("title", title));
 		update.add(new Label("captchaq", a+" + "+b+" is? (hint: "+(a+b)+")"));
 		update.add(new TextField<String>("captcha", captcha).setRequired(true)
@@ -114,8 +147,9 @@ public class AddPage extends BorderPage {
 		update.add(new TextField<String>("name", name).setRequired(true)
 				.add(StringValidator.maximumLength(100))
 				.add(new AdminNameValidator(adminName, adminEmail)));
-		update.add(new TextField<String>("email", email)
-				.add(EmailAddressValidator.getInstance()));
+		update.add(new TextField<String>("email", email).add(
+				EmailAddressValidator.getInstance()).add(
+				new AdminNameValidator(adminEmail, adminEmail)));
 		update.add(new TextField<String>("homepage", homepage)
 				.add(StringValidator.maximumLength(200)));
 		update.add(new Link<String>("cancel") {
@@ -127,13 +161,34 @@ public class AddPage extends BorderPage {
 		});
 //		update.add(new FeedbackLabel("feedback", update));
 		update.add(new FeedbackPanel("feedback"));
-		add(update);
+
+		// admin visible fields
+		boolean admin = AppEngineHelper.isCurrentUser(adminEmail);
+		update.add(new TextArea<String>("note", note).setVisible(admin));
+		update.add(new TextField<Integer>("votes", votes, Integer.class)
+				.setVisible(admin));
+		List<Pair<Integer, String>> choices = new ArrayList<Pair<Integer,String>>();
+		choices.add(newStatusPair(Comment.STATUS_UNASSIGNED));
+		choices.add(newStatusPair(Comment.STATUS_OPEN_NEEDSINFO));
+		choices.add(newStatusPair(Comment.STATUS_OPEN_UNDERREVIEW));
+		choices.add(newStatusPair(Comment.STATUS_OPEN_STARTED));
+		choices.add(newStatusPair(Comment.STATUS_CLOSED_PENDING));
+		choices.add(newStatusPair(Comment.STATUS_CLOSED_COMPLETED));
+		choices.add(newStatusPair(Comment.STATUS_CLOSED_DECLINED));
+		choices.add(newStatusPair(Comment.STATUS_CLOSED_DUPLICATE));
+		update.add(new DropDownChoice<Pair<Integer, String>>("status", status,
+				choices, new ChoiceRenderer<Pair<Integer, String>>("second"))
+				.setVisible(admin));
 	}
 
-	public boolean sendEmailToSelf(String subject, String text){
-		try{
-			String emailSelfEmail = getString("emailself.email");
-			String emailSelfName = getString("emailself.name");
+	private Pair<Integer, String> newStatusPair(int status){
+		String statusStr = CommentHelper.getStatusString(this, status);
+		return new Pair<Integer, String>(status, statusStr);
+	}
+
+	public static boolean sendEmailToSelf(String subject, String text,
+			String emailSelfName, String emailSelfEmail) {
+		try {
 			if(!Util.isEmpty(emailSelfEmail)){
 				InternetAddress emailSelf = new InternetAddress(emailSelfEmail, emailSelfName);
 

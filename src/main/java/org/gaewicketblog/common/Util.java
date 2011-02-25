@@ -6,6 +6,8 @@ import java.io.InputStream;
 
 public class Util {
 
+	public static final String UTF8 = "utf-8";
+
 	public static int parseInt(String in, int def){
 		try{
 			if(!isEmpty(in)){

@@ -47,8 +47,8 @@ public class DatabaseCommentProvider extends SortableDataProvider<Comment>
 			query.setOrdering(sp.isAscending() ? "status" : "status desc");
 		}else if(SORT_VOTES.equals(property)) {
 			query.setOrdering(sp.isAscending() ? "votes" : "votes desc");
-//		}else if(SORT_COMMENTS.equals(property)) {
-			//TODO
+		}else if(SORT_COMMENTS.equals(property)) {
+			query.setOrdering(sp.isAscending() ? "comments" : "comments desc");
 		}else{
 			query.setOrdering(sp.isAscending() ? "date" : "date desc");
 		}

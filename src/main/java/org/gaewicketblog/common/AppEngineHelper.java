@@ -11,12 +11,16 @@ public class AppEngineHelper {
 
 	private final static Logger log = LoggerFactory.getLogger(AppEngineHelper.class);
 
-	public static boolean isAdmin(String adminemail) {
+	public static boolean isCurrentUser(String...emails) {
 		UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();
         if (user != null) {
         	log.debug("user="+user.toString());
-        	return adminemail.equalsIgnoreCase(user.getEmail());
+        	for (String email : emails) {
+				if (email != null && email.equalsIgnoreCase(user.getEmail())) {
+					return true;
+				}
+			}
         }
 		return false;
 	}

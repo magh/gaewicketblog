@@ -1,8 +1,11 @@
 package org.gaewicketblog.common;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
@@ -28,6 +31,15 @@ public class DbHelper {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
 			return pm.makePersistent(obj);
+		} finally {
+			pm.close();
+		}
+	}
+
+	public static Object mergeAll(List<? extends Object> objs){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			return pm.makePersistentAll(objs);
 		} finally {
 			pm.close();
 		}
@@ -95,6 +107,34 @@ public class DbHelper {
 					.execute(parentid));
 		}finally{
 			query.closeAll();
+		}
+	}
+
+	public static List<Comment> getAllComments(){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try{
+			Extent<Comment> extent = pm.getExtent(Comment.class);
+			List<Comment> res = new ArrayList<Comment>();
+			for (Comment comment : extent) {
+				res.add(comment);
+			}
+			return res;
+		}finally{
+			pm.close();
+		}
+	}
+
+	public static Map<Long, Comment> getAllCommentsAsMap(){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try{
+			Extent<Comment> extent = pm.getExtent(Comment.class);
+			Map<Long, Comment> res = new HashMap<Long, Comment>();
+			for (Comment comment : extent) {
+				res.put(comment.getId(), comment);
+			}
+			return res;
+		}finally{
+			pm.close();
 		}
 	}
 

@@ -52,4 +52,12 @@
 		<property name="parentid" direction="asc"/>
 		<property name="type" direction="desc"/>
 	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="comments" direction="asc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="comments" direction="desc"/>
+	</datastore-index>
 </datastore-indexes>

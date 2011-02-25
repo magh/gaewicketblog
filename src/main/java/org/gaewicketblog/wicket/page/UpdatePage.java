@@ -1,5 +1,10 @@
 package org.gaewicketblog.wicket.page;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.wicket.markup.html.form.ChoiceRenderer;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
@@ -21,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.appengine.api.datastore.Text;
+import com.google.appengine.repackaged.com.google.common.base.Pair;
 
 @SuppressWarnings("serial")
 public class UpdatePage extends BorderPage {
@@ -38,6 +44,8 @@ public class UpdatePage extends BorderPage {
 		final IModel<String> name = new Model<String>(comment.getAuthor());
 		final IModel<String> email = new Model<String>(); //TODO is email stored?
 		final IModel<String> homepage = new Model<String>(); //TODO is homepage stored?
+		final IModel<Pair<Integer, String>> status = new Model<Pair<Integer, String>>();
+		final IModel<Integer> votes = new Model<Integer>(comment.getVotes());
 
 		Form<String> update = new Form<String>("update") {
 			@Override
@@ -45,17 +53,19 @@ public class UpdatePage extends BorderPage {
 				try {
 					comment.setSubject(subject.getObject());
 					comment.setText(new Text(text.getObject()));
-					comment.setNote(new Text(note.getObject()));
 					comment.setAuthor(name.getObject());
+					comment.setEmail(email.getObject());
+					comment.setHomepage(homepage.getObject());
+					String noteStr = note.getObject();
+					comment.setNote(noteStr != null ? new Text(noteStr) : null);
+					comment.setVotes(votes.getObject());
+					comment.setStatus(status.getObject().first);
 					if(Util.isEmpty(comment.getLink())) {
 						comment.setLink(CommentHelper.genUrlPath(subject.getObject()));
 						BlogApplication app = (BlogApplication) getApplication();
 						String urlPath = CommentHelper.getUrlPath(comment);
 						app.mountBlogPage(urlPath, ViewPage.class);
 					}
-					//TODO set email and homepage
-//					comment.setEmail(email.getObject());
-//					comment.setHomepage(homepage.getObject());
 					DbHelper.merge(comment);
 					setResponsePage(new ViewPage(comment.getId()));
 				} catch (BlogException e) {
@@ -64,17 +74,12 @@ public class UpdatePage extends BorderPage {
 				}
 			}
 		};
+		add(update);
+
 		update.add(new TextField<String>("subject", subject)
 				.add(StringValidator.maximumLength(100)));
 		update.add(new TextArea<String>("message", text).setRequired(true).add(
 				StringValidator.lengthBetween(2, 5000)));
-		String adminEmail = getString("admin.email");
-		String adminName = getString("admin.name");
-		update.add(new TextArea<String>("note", note)
-				.setVisible(AppEngineHelper.isAdmin(adminEmail)));
-		update.add(new TextField<String>("name", name).setRequired(true)
-				.add(StringValidator.maximumLength(100))
-				.add(new AdminNameValidator(adminName, adminEmail)));
 		update.add(new TextField<String>("email", email)
 				.add(EmailAddressValidator.getInstance()));
 		update.add(new TextField<String>("homepage", homepage)
@@ -87,7 +92,36 @@ public class UpdatePage extends BorderPage {
 		});
 //		update.add(new FeedbackLabel("feedback", update));
 		update.add(new FeedbackPanel("feedback"));
-		add(update);
+
+		// admin visible fields
+		String adminEmail = getString("admin.email");
+		String adminName = getString("admin.name");
+		boolean admin = AppEngineHelper.isCurrentUser(adminEmail);
+		update.add(new TextField<String>("name", name).setRequired(true).add(
+				StringValidator.maximumLength(100)).add(
+				new AdminNameValidator(adminName, adminEmail))
+				.setVisible(admin));
+		update.add(new TextArea<String>("note", note).setVisible(admin));
+		update.add(new TextField<Integer>("votes", votes, Integer.class)
+				.setVisible(admin));
+		List<Pair<Integer, String>> choices = new ArrayList<Pair<Integer,String>>();
+		choices.add(newStatusPair(Comment.STATUS_UNASSIGNED));
+		choices.add(newStatusPair(Comment.STATUS_OPEN_NEEDSINFO));
+		choices.add(newStatusPair(Comment.STATUS_OPEN_UNDERREVIEW));
+		choices.add(newStatusPair(Comment.STATUS_OPEN_STARTED));
+		choices.add(newStatusPair(Comment.STATUS_CLOSED_PENDING));
+		choices.add(newStatusPair(Comment.STATUS_CLOSED_COMPLETED));
+		choices.add(newStatusPair(Comment.STATUS_CLOSED_DECLINED));
+		choices.add(newStatusPair(Comment.STATUS_CLOSED_DUPLICATE));
+		status.setObject(newStatusPair(comment.getStatus()));
+		update.add(new DropDownChoice<Pair<Integer, String>>("status", status,
+				choices, new ChoiceRenderer<Pair<Integer, String>>("second"))
+				.setVisible(admin));
+	}
+
+	private Pair<Integer, String> newStatusPair(int status) {
+		String statusStr = CommentHelper.getStatusString(this, status);
+		return new Pair<Integer, String>(status, statusStr);
 	}
 
 }

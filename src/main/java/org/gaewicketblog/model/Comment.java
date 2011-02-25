@@ -16,14 +16,14 @@ import com.google.appengine.api.datastore.Text;
 public class Comment implements Serializable {
 	
 	/** Status of post. */
-	public final static int STATUS_NOSTATUS = 0;
+	public final static int STATUS_UNASSIGNED = 0;
 	public final static int STATUS_OPEN_UNDERREVIEW = 1;
-	public final static int STATUS_OPEN_PLANNED = 2;
-	public final static int STATUS_OPEN_STARTED = 3;
-	public final static int STATUS_OPEN_NEEDSINFO = 4;
-	public final static int STATUS_CLOSED_COMPLETED = 5;
-	public final static int STATUS_CLOSED_DECLINED = 6;
-	public final static int STATUS_CLOSED_DUPLICATE = 7;
+	public final static int STATUS_OPEN_STARTED = 2;
+	public final static int STATUS_OPEN_NEEDSINFO = 3; // need more information
+	public final static int STATUS_CLOSED_COMPLETED = 4;
+	public final static int STATUS_CLOSED_DECLINED = 5;
+	public final static int STATUS_CLOSED_DUPLICATE = 6;
+	public final static int STATUS_CLOSED_PENDING = 7;
 
 	/** Type of post. */
 	public final static int TYPE_NOTYPE = 0;
@@ -83,6 +83,16 @@ public class Comment implements Serializable {
 	@Persistent
 	private Text note;
 
+	@Persistent
+	private String email;
+
+	@Persistent
+	private String homepage;
+
+	/** User comments. */
+	@Persistent
+	private Integer comments;
+
 //	@Persistent
 //	@Element(dependent = "true")
 //	private List<Comment> comments;
@@ -96,9 +106,10 @@ public class Comment implements Serializable {
 		date = new Date();
 		this.ipaddress = ipaddress;
 		this.link = link;
-		status = STATUS_NOSTATUS;
+		status = STATUS_UNASSIGNED;
 		type = TYPE_NOTYPE;
 		votes = 0;
+		comments = 0;
 	}
 	
 	@Override
@@ -112,10 +123,10 @@ public class Comment implements Serializable {
 		sb.append("\nsubject="+subject);
 		sb.append("\ntext="+text);
 		sb.append("\nlink="+link);
-		sb.append("\n=status"+status);
-		sb.append("\n=type"+type);
-		sb.append("\n=starred"+votes);
-		sb.append("\n=note"+note);
+		sb.append("\nstatus="+status);
+		sb.append("\ntype="+type);
+		sb.append("\nstarred="+votes);
+		sb.append("\nnote="+note);
 		return sb.toString();
 	}
 
@@ -188,7 +199,7 @@ public class Comment implements Serializable {
 	}
 
 	public Integer getStatus() {
-		return status != null ? status : STATUS_NOSTATUS;
+		return status != null ? status : STATUS_UNASSIGNED;
 	}
 
 	public void setStatus(Integer status) {
@@ -217,6 +228,30 @@ public class Comment implements Serializable {
 
 	public void setNote(Text note) {
 		this.note = note;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getHomepage() {
+		return homepage;
+	}
+
+	public void setHomepage(String homepage) {
+		this.homepage = homepage;
+	}
+
+	public Integer getComments() {
+		return comments != null ? comments : 0;
+	}
+
+	public void setComments(Integer comments) {
+		this.comments = comments;
 	}
 
 }

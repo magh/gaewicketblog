@@ -21,6 +21,7 @@ import org.gaewicketblog.model.CommentHelper;
 import org.gaewicketblog.model.TopicSetting;
 import org.gaewicketblog.model.TopicSettingHelper;
 import org.gaewicketblog.wicket.exception.BlogException;
+import org.gaewicketblog.wicket.page.DisqusCronPage;
 import org.gaewicketblog.wicket.page.ListPage;
 import org.gaewicketblog.wicket.page.LoginPage;
 import org.gaewicketblog.wicket.page.ViewPage;
@@ -47,6 +48,10 @@ public class BlogApplication extends WebApplication {
 		// remove thread monitoring from resource watcher
 		getResourceSettings().setResourcePollFrequency(null);
 
+		// to avoid /wicket:pageMapName/wicket-X being added (on session timeout?).
+		// TODO should path resolver be improved instead?
+//		getPageSettings().setAutomaticMultiWindowSupport(false);
+
 //		log.debug("mount static resources");
 //		mountSharedResource("/favicon.ico", resourceKey);
 
@@ -56,7 +61,8 @@ public class BlogApplication extends WebApplication {
 		log.debug("mount pages");
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try{
-			mountBlogPage("/login", LoginPage.class);
+			mountBlogPage(DisqusCronPage.MOUNTPATH, DisqusCronPage.class);
+			mountBlogPage(LoginPage.MOUNTPATH, LoginPage.class);
 			for (TopicSetting topic : topics) {
 				log.debug("mount pages for: "+topic.topic);
 				Class<? extends WebPage> pageClass = TopicSettingHelper
