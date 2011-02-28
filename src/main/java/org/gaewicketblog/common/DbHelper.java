@@ -27,7 +27,7 @@ public class DbHelper {
 		}
 	}
 
-	public static Object merge(Object obj){
+	public static <T> T merge(T obj){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
 			return pm.makePersistent(obj);
@@ -36,10 +36,10 @@ public class DbHelper {
 		}
 	}
 
-	public static Object mergeAll(List<? extends Object> objs){
+	public static <T> List<? extends T> mergeAll(List<? extends T> objs){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			return pm.makePersistentAll(objs);
+			return (List<? extends T>) pm.makePersistentAll(objs);
 		} finally {
 			pm.close();
 		}

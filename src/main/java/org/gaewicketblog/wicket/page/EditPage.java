@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
-import javax.jdo.PersistenceManager;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -13,6 +12,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -30,7 +30,7 @@ import org.apache.wicket.validation.validator.AbstractValidator;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.gaewicketblog.common.AppEngineHelper;
-import org.gaewicketblog.common.PMF;
+import org.gaewicketblog.common.DbHelper;
 import org.gaewicketblog.common.Util;
 import org.gaewicketblog.model.Comment;
 import org.gaewicketblog.model.CommentHelper;
@@ -41,6 +41,8 @@ import org.gaewicketblog.wicket.validator.AdminNameValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import wicket.contrib.tinymce.TinyMceBehavior;
+
 import com.google.appengine.api.datastore.Text;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
@@ -48,87 +50,133 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.repackaged.com.google.common.base.Pair;
 
 @SuppressWarnings("serial")
-public class AddPage extends BorderPage {
+public class EditPage extends BorderPage {
 
-	private final static Logger log = LoggerFactory.getLogger(AddPage.class);
+	private final static Logger log = LoggerFactory.getLogger(EditPage.class);
 	
 	private Random rand = new Random();
 
-	public AddPage(final TopicSetting parent, String title) {
+	/**
+	 * Add view
+	 * @param addParent
+	 * @param title
+	 */
+	public EditPage(String title, TopicSetting addParent) {
+		this(addParent, title, null);
+	}
+
+	/**
+	 * Update view
+	 * @param updateComment
+	 * @param title
+	 */
+	public EditPage(String title, Comment updateComment) {
+		this(null, title, updateComment);
+	}
+
+	/**
+	 * @param addParent
+	 * @param title
+	 * @param updateComment if update or add page.
+	 */
+	private EditPage(final TopicSetting addParent, String title,
+			final Comment updateComment) {
 		super();
+		final boolean update = updateComment != null;
 
 		final IModel<String> captcha = new Model<String>();
 		final IModel<String> subject = new Model<String>();
 		final IModel<String> text = new Model<String>();
+		final IModel<String> note = new Model<String>();
 		final IModel<String> name = new Model<String>();
 		final IModel<String> email = new Model<String>();
 		final IModel<String> homepage = new Model<String>();
-		final IModel<String> note = new Model<String>();
 		final IModel<Pair<Integer, String>> status = new Model<Pair<Integer, String>>();
 		final IModel<Integer> votes = new Model<Integer>();
 		
-		final int a = rand.nextInt(10);
-		final int b = rand.nextInt(10);
-
-		UserService userService = UserServiceFactory.getUserService();
-        User user = userService.getCurrentUser();
-        if(user != null){
-        	email.setObject(user.getEmail());
-        	name.setObject(user.getNickname());
-        }
-
-		Form<String> update = new Form<String>("update") {
+		if(update) { // update
+			subject.setObject(updateComment.getSubject());
+			text.setObject(updateComment.getText().getValue());
+			Text noteText = updateComment.getNote();
+			note.setObject(noteText != null ? noteText.getValue() : "");
+			name.setObject(updateComment.getAuthor());
+			email.setObject(updateComment.getEmail());
+			homepage.setObject(updateComment.getHomepage());
+			votes.setObject(updateComment.getVotes());
+			status.setObject(newStatusPair(updateComment != null ? updateComment
+					.getStatus() : Comment.STATUS_UNASSIGNED));
+		}else{ // add
+			UserService userService = UserServiceFactory.getUserService();
+	        User user = userService.getCurrentUser();
+	        if(user != null){
+	        	email.setObject(user.getEmail());
+	        	name.setObject(user.getNickname());
+	        }
+		}
+		
+		Form<String> editform = new Form<String>("editform") {
 			@Override
 			protected void onSubmit() {
-				HttpServletRequest httpRequest = ((ServletWebRequest) getRequest())
-						.getHttpServletRequest();
-				String ipaddress = httpRequest.getRemoteAddr();
-				PersistenceManager pm = PMF.get().getPersistenceManager();
-				String link = CommentHelper.genUrlPath(subject.getObject());
-				Comment comment = new Comment(parent.id, subject.getObject(),
-						new Text(text.getObject()), name.getObject(), ipaddress, link);
-				comment.setEmail(email.getObject());
-				comment.setHomepage(homepage.getObject());
-				//admin fields
-				String noteStr = note.getObject();
-				comment.setNote(noteStr != null ? new Text(noteStr) : null);
-				comment.setVotes(votes.getObject());
-				Pair<Integer, String> statusVal = status.getObject();
-				if(statusVal != null){
-					comment.setStatus(statusVal.first);
-				}
 				try {
-					BlogApplication app = (BlogApplication) getApplication();
-					String urlPath = CommentHelper.getUrlPath(comment);
-					app.mountBlogPage(urlPath, ViewPage.class);
-
-					comment = pm.makePersistent(comment);
+					Comment newComment;
+					if(update){
+						// update
+						newComment = updateComment;
+						newComment.setSubject(subject.getObject());
+						newComment.setText(new Text(text.getObject()));
+						newComment.setAuthor(name.getObject());
+					}else{
+						// add
+						String ipaddress = getIpAddress();
+						String link = CommentHelper.genUrlPath(subject.getObject());
+						newComment = new Comment(addParent.id, subject.getObject(),
+								new Text(text.getObject()), name.getObject(), ipaddress, link);
+					}
+					newComment.setEmail(email.getObject());
+					newComment.setHomepage(homepage.getObject());
+					String noteStr = note.getObject();
+					newComment.setNote(noteStr != null ? new Text(noteStr) : null);
+					newComment.setVotes(votes.getObject());
+					Pair<Integer, String> statusVal = status.getObject();
+					if(statusVal != null){
+						newComment.setStatus(statusVal.first);
+					}
+					if(Util.isEmpty(newComment.getLink())) {
+						newComment.setLink(CommentHelper.genUrlPath(subject.getObject()));
+						BlogApplication app = (BlogApplication) getApplication();
+						String urlPath = CommentHelper.getUrlPath(newComment);
+						app.mountBlogPage(urlPath, ViewPage.class);
+					}
+					newComment = DbHelper.merge(newComment);
 
 					String adminEmail = getString("admin.email");
 					String adminName = getString("admin.name");
-					if (!adminName.equalsIgnoreCase(comment.getAuthor())
-							&& !adminEmail.equalsIgnoreCase(email.getObject() /*comment.getEmail()*/)) {
+					//check if email self
+					if (!adminName.equalsIgnoreCase(newComment.getAuthor())
+							&& !adminEmail.equalsIgnoreCase(newComment.getEmail())) {
 						String emailSelfEmail = getString("emailself.email");
 						String emailSelfName = getString("emailself.name");
 						sendEmailToSelf(getString("borderpage.title") + ": "
-								+ comment.getSubject(), comment.toString(),
+								+ newComment.getSubject(), newComment.toString(),
 								emailSelfName, emailSelfEmail);
 					}
 					log.debug("Added/updated comment!");
-					setResponsePage(new ViewPage(comment.getId()));
+					setResponsePage(new ViewPage(newComment.getId()));
 				} catch (BlogException e) {
 					log.error(e.getMessage(), e);
 					error("Duplicate subject!");
-				} finally {
-					pm.close();
 				}
 			}
 		};
-		add(update);
+		add(editform);
 
-		update.add(new Label("title", title));
-		update.add(new Label("captchaq", a+" + "+b+" is? (hint: "+(a+b)+")"));
-		update.add(new TextField<String>("captcha", captcha).setRequired(true)
+		//add
+		final int a = rand.nextInt(10);
+		final int b = rand.nextInt(10);
+		editform.add(new Label("title", title));
+		WebMarkupContainer captchatr = new WebMarkupContainer("captchatr");
+		captchatr.add(new Label("captchaq", a+" + "+b+" is? (hint: "+(a+b)+")"));
+		captchatr.add(new TextField<String>("captcha", captcha).setRequired(!update)
 				.add(new AbstractValidator<String>() {
 					@Override
 					protected void onValidate(IValidatable<String> validatable) {
@@ -138,34 +186,43 @@ public class AddPage extends BorderPage {
 						}
 					}
 				}));
-		update.add(new TextField<String>("subject", subject)
-				.add(StringValidator.maximumLength(100)));
-		update.add(new TextArea<String>("message", text).setRequired(true).add(
-				StringValidator.lengthBetween(2, 5000)));
+		editform.add(captchatr.setVisible(!update));
 		String adminEmail = getString("admin.email");
 		String adminName = getString("admin.name");
-		update.add(new TextField<String>("name", name).setRequired(true)
+		editform.add(new TextField<String>("name", name).setRequired(true)
 				.add(StringValidator.maximumLength(100))
 				.add(new AdminNameValidator(adminName, adminEmail)));
-		update.add(new TextField<String>("email", email).add(
+		//update
+		editform.add(new TextField<String>("subject", subject)
+				.add(StringValidator.maximumLength(100)));
+		editform.add(new TextArea<String>("message", text).setRequired(true).add(
+				StringValidator.lengthBetween(2, 5000)).add(
+				new TinyMceBehavior()));
+		editform.add(new TextField<String>("email", email).add(
 				EmailAddressValidator.getInstance()).add(
 				new AdminNameValidator(adminEmail, adminEmail)));
-		update.add(new TextField<String>("homepage", homepage)
+		editform.add(new TextField<String>("homepage", homepage)
 				.add(StringValidator.maximumLength(200)));
-		update.add(new Link<String>("cancel") {
+		editform.add(new Link<String>("cancel") {
 			@Override
 			public void onClick() {
-				getRequestCycle().setRequestTarget(
-						new RedirectRequestTarget("/" + parent.path));
+				if(updateComment != null){
+					setResponsePage(new ViewPage(updateComment.getId()));
+				}else{
+					getRequestCycle().setRequestTarget(
+							new RedirectRequestTarget("/" + addParent.path));
+				}
 			}
 		});
 //		update.add(new FeedbackLabel("feedback", update));
-		update.add(new FeedbackPanel("feedback"));
+		editform.add(new FeedbackPanel("feedback"));
 
 		// admin visible fields
 		boolean admin = AppEngineHelper.isCurrentUser(adminEmail);
-		update.add(new TextArea<String>("note", note).setVisible(admin));
-		update.add(new TextField<Integer>("votes", votes, Integer.class)
+		editform.add(new TextArea<String>("note", note).add(
+				StringValidator.maximumLength(5000)).add(new TinyMceBehavior())
+				.setVisible(admin));
+		editform.add(new TextField<Integer>("votes", votes, Integer.class)
 				.setVisible(admin));
 		List<Pair<Integer, String>> choices = new ArrayList<Pair<Integer,String>>();
 		choices.add(newStatusPair(Comment.STATUS_UNASSIGNED));
@@ -176,14 +233,20 @@ public class AddPage extends BorderPage {
 		choices.add(newStatusPair(Comment.STATUS_CLOSED_COMPLETED));
 		choices.add(newStatusPair(Comment.STATUS_CLOSED_DECLINED));
 		choices.add(newStatusPair(Comment.STATUS_CLOSED_DUPLICATE));
-		update.add(new DropDownChoice<Pair<Integer, String>>("status", status,
+		editform.add(new DropDownChoice<Pair<Integer, String>>("status", status,
 				choices, new ChoiceRenderer<Pair<Integer, String>>("second"))
 				.setVisible(admin));
 	}
-
-	private Pair<Integer, String> newStatusPair(int status){
+	
+	private Pair<Integer, String> newStatusPair(int status) {
 		String statusStr = CommentHelper.getStatusString(this, status);
 		return new Pair<Integer, String>(status, statusStr);
+	}
+
+	public String getIpAddress() {
+		HttpServletRequest httpRequest = ((ServletWebRequest) getRequest())
+				.getHttpServletRequest();
+		return httpRequest.getRemoteAddr();
 	}
 
 	public static boolean sendEmailToSelf(String subject, String text,

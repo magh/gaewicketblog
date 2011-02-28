@@ -64,10 +64,11 @@ public class ViewPage extends BorderPage {
         final Comment comment = commentModel.getObject();
 		add(new Label("author", comment.getAuthor()));
 		add(new Label("subject", comment.getSubject()));
-		add(new ImgSmartLinkMultiLineLabel("text", comment.getText().getValue()));
+		add(new ImgSmartLinkMultiLineLabel("text", comment.getText().getValue())
+				.setEscapeModelStrings(false));
 		String note = comment.getNote() != null ? comment.getNote().getValue() : "";
-		add(new ImgSmartLinkMultiLineLabel("note", note).setVisible(!Util
-				.isEmpty(note)));
+		add(new ImgSmartLinkMultiLineLabel("note", note).setVisible(
+				!Util.isEmpty(note)).setEscapeModelStrings(false));
 		add(new Label("date", ""+comment.getDate()));
 
 		Integer status = comment.getStatus();
@@ -83,14 +84,14 @@ public class ViewPage extends BorderPage {
 		add(new Link<String>("edit"){
 			@Override
 			public void onClick() {
-				setResponsePage(new UpdatePage(comment));
+				setResponsePage(new EditPage("Update", comment));
 			}
 		}.setVisible(canedit));
 		//delete
 		add(new Link<String>("delete"){
 			@Override
 			public void onClick() {
-				//TODO confirm
+				//TODO confirm dialog for delete
 				DbHelper.delete(comment);
 				BlogApplication app = (BlogApplication) getApplication();
 				TopicSetting parent = TopicSettingHelper.getById(app.topics,

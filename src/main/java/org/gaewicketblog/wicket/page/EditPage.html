@@ -1,0 +1,35 @@
+<wicket:extend>
+ <form wicket:id="editform">
+  <div><h3><span wicket:id="title">New Topic</span></h3></div>
+  <table>
+  <tr wicket:id="captchatr"><td><span wicket:id="captchaq">[9 + 1 is? (hint: 10)]</span></td>
+  <td class="feedbackPanelERROR">*</td>
+  <td><input wicket:id="captcha"/><br><wicket:message key="editpage.areyouhuman">Are you human? Enter the result above.</wicket:message></td></tr>
+  <tr><td><wicket:message key="editpage.subject">Subject:</wicket:message></td>
+  <td class="feedbackPanelERROR">*</td>
+  <td><input wicket:id="subject"/></td></tr>
+  <tr><td><wicket:message key="editpage.message">Message:</wicket:message></td>
+  <td class="feedbackPanelERROR">*</td>
+  <td>
+   <textarea wicket:id="message" rows="15" cols="40"></textarea>
+   <select wicket:id="status"></select>
+   <input wicket:id="votes"/>
+   <textarea wicket:id="note" rows="15" cols="40"></textarea>
+  </td></tr>
+  <tr><td><wicket:message key="editpage.name">Name:</wicket:message></td>
+  <td class="feedbackPanelERROR">*</td>
+  <td><input wicket:id="name"/></td></tr>
+  <tr><td><wicket:message key="editpage.email">Email:</wicket:message></td>
+  <td></td>
+  <td><input wicket:id="email"/><br><wicket:message key="editpage.emailwillnotbepublished">Email will not be published.</wicket:message></td></tr>
+  <tr><td><wicket:message key="editpage.homepage">Home Page:</wicket:message></td>
+  <td></td>
+  <td><input wicket:id="homepage"/></td></tr>
+  </table>
+  <div>
+   <input type="submit" value="Submit" wicket:message="value:editpage.submit">
+   <input wicket:id="cancel" type="button" value="Cancel" wicket:message="value:editpage.cancel">
+  </div>
+  <div><span wicket:id="feedback">[Feedback messages]</span></div>
+ </form>
+</wicket:extend>

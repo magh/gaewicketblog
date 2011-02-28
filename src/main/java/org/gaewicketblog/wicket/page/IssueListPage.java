@@ -68,7 +68,8 @@ public class IssueListPage extends BorderPage {
 		add(new Link<Void>("topicdescaddlink"){
 			@Override
 			public void onClick() {
-				setResponsePage(new AddPage(setting, getString("issuelistpage.post")));
+				setResponsePage(new EditPage(getString("issuelistpage.post"),
+						setting));
 			}
 		}.add(new Label("topicdesc", setting.topicdesc)));
 
@@ -124,7 +125,8 @@ public class IssueListPage extends BorderPage {
 		add(new Link<String>("add") {
 			@Override
 			public void onClick() {
-				setResponsePage(new AddPage(setting, getString("issuelistpage.post")));
+				setResponsePage(new EditPage(getString("issuelistpage.post"),
+						setting));
 			}
 		}.setVisible(setting.canPost || admin));
 

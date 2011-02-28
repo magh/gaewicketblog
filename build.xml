@@ -39,6 +39,9 @@
   <!-- Output directory -->
   <property name="war.dir" location="target/war"/>
 
+  <!-- Wicket version -->
+  <property name="wicket.version" value="1.4.9"/>
+
   <filelist id="mavendeps" dir="${maven.dir}">
 <!--
     <file name="javax/jdo/jdo2-api/2.3-ea/jdo2-api-2.3-ea.jar" />
@@ -53,9 +56,13 @@
     <file name="org/json/json/20090211/json-20090211.jar" />
     <file name="org/slf4j/slf4j-api/1.5.11/slf4j-api-1.5.11.jar" />
     <file name="org/slf4j/slf4j-jdk14/1.5.11/slf4j-jdk14-1.5.11.jar" />
-    <file name="org/apache/wicket/wicket/1.4.9/wicket-1.4.9.jar" />
-    <file name="org/apache/wicket/wicket-auth-roles/1.4.9/wicket-auth-roles-1.4.9.jar" />
-    <file name="org/apache/wicket/wicket-extensions/1.4.9/wicket-extensions-1.4.9.jar" />
+    <file name="org/apache/wicket/wicket/${wicket.version}/wicket-${wicket.version}.jar" />
+    <file name="org/apache/wicket/wicket-auth-roles/${wicket.version}/wicket-auth-roles-${wicket.version}.jar" />
+    <file name="org/apache/wicket/wicket-extensions/${wicket.version}/wicket-extensions-${wicket.version}.jar" />
+    <file name="org/wicketstuff/tinymce/${wicket.version}/tinymce-${wicket.version}.jar" />
+    <file name="commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar" />
+    <file name="commons-io/commons-io/1.4/commons-io-1.4.jar" />
+    <file name="jazzyplugin/jazzyplugin/0.5.2/jazzyplugin-0.5.2.jar" />
 <!--
     <file name="org/mortbay/jetty/servlet-api/2.5-20081211/servlet-api-2.5-20081211.jar" />
 -->

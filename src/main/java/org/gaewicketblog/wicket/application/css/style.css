@@ -485,11 +485,12 @@ tr.section td {
 /* ------------------------------------------ */
 .status {
 color: #fff !important;
-font-size: 9px;
-font-weight: bold;
-letter-spacing: 0;
-padding: 3px;      
--webkit-border-radius: 0.5em;
+display: inline-block; 
+font-size: 9px; 
+font-weight: bold; 
+letter-spacing: 0; 
+padding: 0px 0.5em; 
+-webkit-border-radius: 0.5em; 
 -moz-border-radius: 0.5em}
 
 .white { background-color: #fff; }

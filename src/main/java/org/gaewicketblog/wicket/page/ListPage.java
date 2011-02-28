@@ -72,8 +72,13 @@ public class ListPage extends BorderPage {
 			protected void populateItem(final Item<Comment> item) {
 				final Comment comment = item.getModelObject();
 				item.add(new Label("author", comment.getAuthor()));
-				item.add(new ImgSmartLinkMultiLineLabel("text", comment.getText()
-						.getValue()).setVisible(setting.showText));
+				item.add(new ImgSmartLinkMultiLineLabel("text", comment
+						.getText().getValue()).setVisible(setting.showText)
+						.setEscapeModelStrings(false));
+				// <p><span wicket:id="note" class="triangle-border right">[note]</span></p>
+//				String note = comment.getNote() != null ? comment.getNote().getValue() : "";
+//				item.add(new ImgSmartLinkMultiLineLabel("note", note).setVisible(
+//						!Util.isEmpty(note)).setEscapeModelStrings(false));
 				item.add(new Label("date", ""+comment.getDate()));
 				item.add(new ExternalLink("comments", CommentHelper
 						.getUrlPath(comment)+"#disqus_thread"));
@@ -95,13 +100,13 @@ public class ListPage extends BorderPage {
 		add(new Link<String>("add1") {
 			@Override
 			public void onClick() {
-				setResponsePage(new AddPage(setting, title));
+				setResponsePage(new EditPage(title, setting));
 			}
 		}.setVisible(setting.canPost || admin));
 		add(new Link<String>("add2") {
 			@Override
 			public void onClick() {
-				setResponsePage(new AddPage(setting, title));
+				setResponsePage(new EditPage(title, setting));
 			}
 		}.setVisible(setting.canPost || admin));
 		//disqus/comments
