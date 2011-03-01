@@ -117,8 +117,8 @@ public class BlogApplication extends WebApplication {
 			log.error(e.getMessage(), e);
 			throw new RuntimeException(e);
 		}
-		try{
-			for (int i = 1; i < 10; i++) {
+		for (int i = 0; i < 10; i++) {
+			try{
 				long id = Long.parseLong(props.getProperty("header.menu"+i+".id"));
 				String path = props.getProperty("header.menu"+i+".path");
 				boolean canPost = Boolean.parseBoolean(props.getProperty("header.menu"+i+".canpost"));
@@ -127,10 +127,11 @@ public class BlogApplication extends WebApplication {
 				String topicdesc = props.getProperty("header.menu"+i+".description");
 				String clz = props.getProperty("header.menu"+i+".class");
 				topics.add(new TopicSetting(id, path, canPost, showText, topic, topicdesc, clz));
+			}catch(Exception e){
+				log.debug("loadHeaderMenus: " + i + " - " + e.getMessage());
 			}
-		}catch(Exception e){
-			log.info("Topics found: "+topics.size());
 		}
+		log.info("Topics found: "+topics.size());
 	}
 
 }

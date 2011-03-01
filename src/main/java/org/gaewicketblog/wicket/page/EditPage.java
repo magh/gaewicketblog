@@ -219,11 +219,11 @@ public class EditPage extends BorderPage {
 
 		// admin visible fields
 		boolean admin = AppEngineHelper.isCurrentUser(adminEmail);
-		editform.add(new TextArea<String>("note", note).add(
-				StringValidator.maximumLength(5000)).add(new TinyMceBehavior())
-				.setVisible(admin));
-		editform.add(new TextField<Integer>("votes", votes, Integer.class)
-				.setVisible(admin));
+		WebMarkupContainer adminfields = new WebMarkupContainer("adminfields");
+		editform.add(adminfields.setVisible(admin));
+		adminfields.add(new TextArea<String>("note", note).add(
+				StringValidator.maximumLength(5000)).add(new TinyMceBehavior()));
+		adminfields.add(new TextField<Integer>("votes", votes, Integer.class));
 		List<Pair<Integer, String>> choices = new ArrayList<Pair<Integer,String>>();
 		choices.add(newStatusPair(Comment.STATUS_UNASSIGNED));
 		choices.add(newStatusPair(Comment.STATUS_OPEN_NEEDSINFO));
@@ -233,9 +233,8 @@ public class EditPage extends BorderPage {
 		choices.add(newStatusPair(Comment.STATUS_CLOSED_COMPLETED));
 		choices.add(newStatusPair(Comment.STATUS_CLOSED_DECLINED));
 		choices.add(newStatusPair(Comment.STATUS_CLOSED_DUPLICATE));
-		editform.add(new DropDownChoice<Pair<Integer, String>>("status", status,
-				choices, new ChoiceRenderer<Pair<Integer, String>>("second"))
-				.setVisible(admin));
+		adminfields.add(new DropDownChoice<Pair<Integer, String>>("status", status,
+				choices, new ChoiceRenderer<Pair<Integer, String>>("second")));
 	}
 	
 	private Pair<Integer, String> newStatusPair(int status) {

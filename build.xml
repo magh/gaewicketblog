@@ -40,7 +40,7 @@
   <property name="war.dir" location="target/war"/>
 
   <!-- Wicket version -->
-  <property name="wicket.version" value="1.4.9"/>
+  <property name="wicket.version" value="1.4.15"/>
 
   <filelist id="mavendeps" dir="${maven.dir}">
 <!--
