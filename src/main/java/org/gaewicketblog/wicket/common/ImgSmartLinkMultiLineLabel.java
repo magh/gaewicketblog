@@ -19,16 +19,7 @@ public class ImgSmartLinkMultiLineLabel extends SmartLinkMultiLineLabel {
 
 	public static class SmartLinkParser extends LinkParser {
 
-		private static final String emailPattern = "[\\w\\.-]+@[\\w\\.-]+";
-
 		private static final String urlPattern = "([a-zA-Z]+://[\\w\\.\\-\\:\\/~]+)[\\w\\.:\\-/?&=%]*";
-
-		public static final ILinkRenderStrategy EMAIL_RENDER_STRATEGY = new ILinkRenderStrategy() {
-			public String buildLink(String linkTarget) {
-				return "<a href=\"mailto:" + linkTarget + "\">" + linkTarget
-						+ "</a>";
-			}
-		};
 
 		public static final ILinkRenderStrategy URL_RENDER_STRATEGY = new ILinkRenderStrategy() {
 			public String buildLink(String linkTarget) {
@@ -49,7 +40,6 @@ public class ImgSmartLinkMultiLineLabel extends SmartLinkMultiLineLabel {
 		public SmartLinkParser() {
 			super();
 			addLinkRenderStrategy(urlPattern, URL_RENDER_STRATEGY);
-			addLinkRenderStrategy(emailPattern, EMAIL_RENDER_STRATEGY);
 		}
 	}
 

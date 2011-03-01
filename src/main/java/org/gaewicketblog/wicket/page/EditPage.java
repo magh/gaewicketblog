@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wicket.contrib.tinymce.TinyMceBehavior;
+import wicket.contrib.tinymce.settings.TinyMCESettings;
 
 import com.google.appengine.api.datastore.Text;
 import com.google.appengine.api.users.User;
@@ -170,6 +171,9 @@ public class EditPage extends BorderPage {
 		};
 		add(editform);
 
+		TinyMCESettings settings = new TinyMCESettings();
+		settings.addCustomSetting("apply_source_formatting : false");
+
 		//add
 		final int a = rand.nextInt(10);
 		final int b = rand.nextInt(10);
@@ -197,7 +201,7 @@ public class EditPage extends BorderPage {
 				.add(StringValidator.maximumLength(100)));
 		editform.add(new TextArea<String>("message", text).setRequired(true).add(
 				StringValidator.lengthBetween(2, 5000)).add(
-				new TinyMceBehavior()));
+				new TinyMceBehavior(settings)));
 		editform.add(new TextField<String>("email", email).add(
 				EmailAddressValidator.getInstance()).add(
 				new AdminNameValidator(adminEmail, adminEmail)));
@@ -222,7 +226,7 @@ public class EditPage extends BorderPage {
 		WebMarkupContainer adminfields = new WebMarkupContainer("adminfields");
 		editform.add(adminfields.setVisible(admin));
 		adminfields.add(new TextArea<String>("note", note).add(
-				StringValidator.maximumLength(5000)).add(new TinyMceBehavior()));
+				StringValidator.maximumLength(5000)).add(new TinyMceBehavior(settings)));
 		adminfields.add(new TextField<Integer>("votes", votes, Integer.class));
 		List<Pair<Integer, String>> choices = new ArrayList<Pair<Integer,String>>();
 		choices.add(newStatusPair(Comment.STATUS_UNASSIGNED));

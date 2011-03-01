@@ -49,8 +49,8 @@ public class BlogApplication extends WebApplication {
 		getResourceSettings().setResourcePollFrequency(null);
 
 		// to avoid /wicket:pageMapName/wicket-X being added (on session timeout?).
-		// TODO should path resolver be improved instead?
-//		getPageSettings().setAutomaticMultiWindowSupport(false);
+		// TODO should path resolver be improved instead? Tried but didn't work... Trying with multi window support off.
+		getPageSettings().setAutomaticMultiWindowSupport(false);
 
 //		log.debug("mount static resources");
 //		mountSharedResource("/favicon.ico", resourceKey);
