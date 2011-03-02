@@ -19,11 +19,22 @@ public class Comment implements Serializable {
 	public final static int STATUS_UNASSIGNED = 0;
 	public final static int STATUS_OPEN_UNDERREVIEW = 1;
 	public final static int STATUS_OPEN_STARTED = 2;
-	public final static int STATUS_OPEN_NEEDSINFO = 3; // need more information
+	public final static int STATUS_OPEN_NEEDSINFO = 3; // needs more information
 	public final static int STATUS_CLOSED_COMPLETED = 4;
 	public final static int STATUS_CLOSED_DECLINED = 5;
 	public final static int STATUS_CLOSED_DUPLICATE = 6;
-	public final static int STATUS_CLOSED_PENDING = 7;
+	public final static int STATUS_OPEN_PENDING = 7;
+
+	public final static int[] STATUSES_OPEN = new int[] { 
+			STATUS_UNASSIGNED,
+			STATUS_OPEN_NEEDSINFO, 
+			STATUS_OPEN_STARTED, 
+			STATUS_OPEN_UNDERREVIEW, 
+			STATUS_OPEN_PENDING };
+	public final static int[] STATUSES_CLOSED = new int[]{
+		STATUS_CLOSED_COMPLETED, 
+		STATUS_CLOSED_DECLINED, 
+		STATUS_CLOSED_DUPLICATE };
 
 	/** Type of post. */
 	public final static int TYPE_NOTYPE = 0;

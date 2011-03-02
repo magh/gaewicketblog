@@ -112,7 +112,7 @@ img.center {
 	font-size: 12pt;
 	letter-spacing: 2px;
 	padding: 26px 10px;
-	text-decoration: none;
+	/*text-decoration: none;*/
 }
 
 #nav ul li a:hover {
@@ -133,7 +133,7 @@ img.center {
 	font-size: 8pt;
 	padding-top: 5px;
 	padding-right: 5px;
-	text-decoration: none;
+	/*text-decoration: none;*/
 }
 
 /* 
@@ -151,7 +151,6 @@ div#wrapper {
 	Content
 */
 div#maincontent {
-	width: 600px;
 	min-height: 600px;
 	height: auto;
 	padding: 20px;
@@ -171,7 +170,7 @@ div#homepage a {
 }
 
 div#homepage a:hover {
-	text-decoration: none;
+/*	text-decoration: none;*/
 }
 
 #big-apps {
@@ -233,6 +232,21 @@ div#sidebar {
 
 div.download {
 	line-height: 0px;
+}
+
+div.topbox {
+	background-color: #f8f8f8;
+	/* font-size: 11px; */
+	padding-left: 8px;
+	padding-right: 30px;
+	border: 1px solid #cdcdcd;
+	height: auto;
+}
+
+div.topbox a {
+	text-decoration: underline;
+	font-weight: bold;
+	padding-right: 8px;
 }
 
 div.sidebox {

@@ -18,7 +18,9 @@ import org.gaewicketblog.wicket.application.BlogApplication;
 import org.gaewicketblog.wicket.common.DisqusCountPanel;
 import org.gaewicketblog.wicket.common.ImgSmartLinkMultiLineLabel;
 import org.gaewicketblog.wicket.common.SimplePagingNavigator;
+import org.gaewicketblog.wicket.panel.ContactPanel;
 import org.gaewicketblog.wicket.panel.RecentPostsPanel;
+import org.gaewicketblog.wicket.panel.SearchPanel;
 import org.gaewicketblog.wicket.provider.DatabaseCommentProvider;
 import org.gaewicketblog.wicket.provider.FixedCommentProvider;
 import org.gaewicketblog.wicket.provider.ICommentProvider;
@@ -42,9 +44,9 @@ public class ListPage extends BorderPage {
 	public ListPage(long parentid) {
 		super();
 		log.debug("parentid="+parentid);
-		DatabaseCommentProvider provider = new DatabaseCommentProvider(parentid);
 		BlogApplication app = (BlogApplication) getApplication();
 		TopicSetting setting = TopicSettingHelper.getById(app.topics, parentid);
+		DatabaseCommentProvider provider = new DatabaseCommentProvider(parentid);
 		init(setting, provider);
 	}
 
@@ -113,6 +115,8 @@ public class ListPage extends BorderPage {
 		String shortname = getString("disqus.shortname");
 		add(new DisqusCountPanel("disqus", shortname));
 
+		addSidebarPanel(new SearchPanel(nextSidebarId()));
+		addSidebarPanel(new ContactPanel(nextSidebarId()));
 		addSidebarPanel(new RecentPostsPanel(nextSidebarId(), provider));
 	}
 

@@ -79,7 +79,7 @@ public class BlogApplication extends WebApplication {
 			}
 		} catch (BlogException e) {
 			throw new RuntimeException(e);
-		}finally{
+		} finally {
 			pm.close();
 		}
 		log.info("init end");

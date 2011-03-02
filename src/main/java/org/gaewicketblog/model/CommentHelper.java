@@ -44,14 +44,14 @@ public class CommentHelper {
 			return "purple";
 		case Comment.STATUS_OPEN_STARTED:
 			return "magenta";
+		case Comment.STATUS_OPEN_PENDING:
+			return "green";
 		case Comment.STATUS_CLOSED_COMPLETED:
 			return "blue";
 		case Comment.STATUS_CLOSED_DECLINED:
 			return "red";
 		case Comment.STATUS_CLOSED_DUPLICATE:
 			return "black";
-		case Comment.STATUS_CLOSED_PENDING:
-			return "green";
 		}
 		log.warn("getStatusColorClass: Invalid status="+status);
 		return "white";
@@ -157,6 +157,27 @@ public class CommentHelper {
 
 	public static String escape(String in) {
 		return in.replaceAll("[\\,/,?,:,\",*,<,>,|,\\',\\’,\\‘]", "");
+	}
+
+	/**
+	 * @param comments
+	 * @param in
+	 * @param statuses to null searches all
+	 * @return
+	 */
+	public static List<Comment> search(List<Comment> comments, String in,
+			int[] statuses) {
+		List<Comment> found = new ArrayList<Comment>();
+		for (Comment comment : comments) {
+			if(statuses == null || Util.contains(comment.getStatus(), statuses)) {
+				if (Util.isEmpty(in) || comment.getAuthor().toLowerCase().contains(in)
+						|| comment.getSubject().toLowerCase().contains(in)
+						|| comment.getText().getValue().toLowerCase().contains(in)) {
+					found.add(comment);
+				}
+			}
+		}
+		return found;
 	}
 
 }

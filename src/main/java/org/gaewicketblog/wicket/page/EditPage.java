@@ -95,7 +95,10 @@ public class EditPage extends BorderPage {
 		final IModel<Pair<Integer, String>> status = new Model<Pair<Integer, String>>();
 		final IModel<Integer> votes = new Model<Integer>();
 		
-		if(update) { // update
+		UserService userService = UserServiceFactory.getUserService();
+        final User currentUser = userService.getCurrentUser();
+
+        if(update) { // update
 			subject.setObject(updateComment.getSubject());
 			text.setObject(updateComment.getText().getValue());
 			Text noteText = updateComment.getNote();
@@ -107,11 +110,9 @@ public class EditPage extends BorderPage {
 			status.setObject(newStatusPair(updateComment != null ? updateComment
 					.getStatus() : Comment.STATUS_UNASSIGNED));
 		}else{ // add
-			UserService userService = UserServiceFactory.getUserService();
-	        User user = userService.getCurrentUser();
-	        if(user != null){
-	        	email.setObject(user.getEmail());
-	        	name.setObject(user.getNickname());
+	        if(currentUser != null){
+	        	email.setObject(currentUser.getEmail());
+	        	name.setObject(currentUser.getNickname());
 	        }
 		}
 		
@@ -129,9 +130,8 @@ public class EditPage extends BorderPage {
 					}else{
 						// add
 						String ipaddress = getIpAddress();
-						String link = CommentHelper.genUrlPath(subject.getObject());
 						newComment = new Comment(addParent.id, subject.getObject(),
-								new Text(text.getObject()), name.getObject(), ipaddress, link);
+								new Text(text.getObject()), name.getObject(), ipaddress, null);
 					}
 					newComment.setEmail(email.getObject());
 					newComment.setHomepage(homepage.getObject());
@@ -142,19 +142,23 @@ public class EditPage extends BorderPage {
 					if(statusVal != null){
 						newComment.setStatus(statusVal.first);
 					}
+					// mount if add or link not set
 					if(Util.isEmpty(newComment.getLink())) {
 						newComment.setLink(CommentHelper.genUrlPath(subject.getObject()));
 						BlogApplication app = (BlogApplication) getApplication();
 						String urlPath = CommentHelper.getUrlPath(newComment);
 						app.mountBlogPage(urlPath, ViewPage.class);
 					}
+					// DB add/update
 					newComment = DbHelper.merge(newComment);
 
 					String adminEmail = getString("admin.email");
 					String adminName = getString("admin.name");
 					//check if email self
 					if (!adminName.equalsIgnoreCase(newComment.getAuthor())
-							&& !adminEmail.equalsIgnoreCase(newComment.getEmail())) {
+							&& !adminEmail.equalsIgnoreCase(newComment.getEmail())
+							&& (currentUser == null || !adminEmail
+									.equalsIgnoreCase(currentUser.getEmail()))) {
 						String emailSelfEmail = getString("emailself.email");
 						String emailSelfName = getString("emailself.name");
 						sendEmailToSelf(getString("borderpage.title") + ": "
@@ -233,14 +237,14 @@ public class EditPage extends BorderPage {
 		choices.add(newStatusPair(Comment.STATUS_OPEN_NEEDSINFO));
 		choices.add(newStatusPair(Comment.STATUS_OPEN_UNDERREVIEW));
 		choices.add(newStatusPair(Comment.STATUS_OPEN_STARTED));
-		choices.add(newStatusPair(Comment.STATUS_CLOSED_PENDING));
+		choices.add(newStatusPair(Comment.STATUS_OPEN_PENDING));
 		choices.add(newStatusPair(Comment.STATUS_CLOSED_COMPLETED));
 		choices.add(newStatusPair(Comment.STATUS_CLOSED_DECLINED));
 		choices.add(newStatusPair(Comment.STATUS_CLOSED_DUPLICATE));
 		adminfields.add(new DropDownChoice<Pair<Integer, String>>("status", status,
 				choices, new ChoiceRenderer<Pair<Integer, String>>("second")));
 	}
-	
+
 	private Pair<Integer, String> newStatusPair(int status) {
 		String statusStr = CommentHelper.getStatusString(this, status);
 		return new Pair<Integer, String>(status, statusStr);

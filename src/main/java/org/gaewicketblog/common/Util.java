@@ -63,4 +63,13 @@ public class Util {
 		}
 	}
 
+	public static boolean contains(int status, int[] statuses) {
+		for (int i : statuses) {
+			if(status == i){
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

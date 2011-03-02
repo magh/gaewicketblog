@@ -17,8 +17,6 @@ import org.apache.wicket.model.Model;
 import org.gaewicketblog.model.Comment;
 import org.gaewicketblog.model.TopicSetting;
 import org.gaewicketblog.wicket.application.BlogApplication;
-import org.gaewicketblog.wicket.panel.ContactPanel;
-import org.gaewicketblog.wicket.panel.SearchPanel;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
@@ -26,6 +24,8 @@ import com.google.appengine.api.users.UserServiceFactory;
 
 @SuppressWarnings("serial")
 public class BorderPage extends WebPage {
+
+	private WebMarkupContainer maincontent;
 
 	public BorderPage() {
 		super();
@@ -75,10 +75,17 @@ public class BorderPage extends WebPage {
 			}
 		}.add(new Label("logintext", user != null ? "logout " : "login")));
 
+		maincontent = new WebMarkupContainer("maincontent",
+				new Model<Boolean>()){
+			@Override
+			public boolean isTransparentResolver() {
+				return true;
+			}
+		};
+		add(maincontent);
+
 		RepeatingView sidebar = new RepeatingView("sidebar");
 		add(sidebar);
-		addSidebarPanel(new SearchPanel(sidebar.newChildId()));
-		addSidebarPanel(new ContactPanel(sidebar.newChildId()));
 	}
 
 	public String nextSidebarId(){
@@ -87,6 +94,12 @@ public class BorderPage extends WebPage {
 	}
 
 	public void addSidebarPanel(Component child){
+		if(maincontent.getDefaultModelObject() == null){
+			maincontent.setDefaultModelObject(true);
+			// set max width to main content.
+			maincontent.add(new AttributeModifier(
+					"style", true, new Model<String>("width: 600px;")));
+		}
 		RepeatingView sidebar = (RepeatingView) get("sidebar");
 		sidebar.add(child);
 	}

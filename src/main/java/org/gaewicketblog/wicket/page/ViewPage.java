@@ -17,6 +17,10 @@ import org.gaewicketblog.model.TopicSettingHelper;
 import org.gaewicketblog.wicket.application.BlogApplication;
 import org.gaewicketblog.wicket.common.DisqusPanel;
 import org.gaewicketblog.wicket.common.ImgSmartLinkMultiLineLabel;
+import org.gaewicketblog.wicket.panel.ContactPanel;
+import org.gaewicketblog.wicket.panel.RecentPostsPanel;
+import org.gaewicketblog.wicket.panel.SearchPanel;
+import org.gaewicketblog.wicket.provider.DatabaseCommentProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,6 +116,11 @@ public class ViewPage extends BorderPage {
 				.getRequestURL().toString();
 		String shortname = getString("disqus.shortname");
 		add(new DisqusPanel("disqus", shortname, "" + comment.getId(), uri, comment.getSubject()));
+
+		addSidebarPanel(new SearchPanel(nextSidebarId()));
+		addSidebarPanel(new ContactPanel(nextSidebarId()));
+		DatabaseCommentProvider provider = new DatabaseCommentProvider(comment.getParentid());
+		addSidebarPanel(new RecentPostsPanel(nextSidebarId(), provider));
 	}
 
 }

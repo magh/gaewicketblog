@@ -13,9 +13,9 @@ public class StatusDescriptionPanel extends Panel {
 		addStatusLabel(Comment.STATUS_OPEN_UNDERREVIEW);
 		addStatusLabel(Comment.STATUS_OPEN_NEEDSINFO);
 		addStatusLabel(Comment.STATUS_OPEN_STARTED);
+		addStatusLabel(Comment.STATUS_OPEN_PENDING);
 		addStatusLabel(Comment.STATUS_CLOSED_COMPLETED);
 		addStatusLabel(Comment.STATUS_CLOSED_DECLINED);
-		addStatusLabel(Comment.STATUS_CLOSED_PENDING);
 	}
 
 	private void addStatusLabel(int status){

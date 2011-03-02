@@ -2,10 +2,20 @@
 	<div id="about">
 		<h1><span wicket:id="topic">[News]</span></h1>
 	</div>
-	<div class="featurebox">
+	<div>
 		<p><a wicket:id="topicdescaddlink"><span wicket:id="topicdesc">[News and updates.]</span></a></p>
 	</div>
-	<div class="featurebox">
+	<div>
+		<div class="topbox">
+			<form wicket:id="searchform">
+				<a wicket:id="add">New issue</a>
+				Search
+				<select wicket:id="status"></select>
+				for
+				<input wicket:id="search">
+				<input type="submit" value="Search" wicket:message="value:searchpanel.search">
+			</form>
+		</div>
 		<table cellspacing="0" class="dataview">
 			<tr>
 				<th wicket:id="orderBySubject">Subject</th>
@@ -25,6 +35,5 @@
 		    </tr>
 		</table>
 		<div><span wicket:id="navigator">[navigator]</span></div>
-		<div style="clear: both; padding-top: 10px"><input wicket:id="add" type="button" value="New Issue" wicket:message="value:issuelistpage.post"></div>
 	</div>
 </wicket:extend>

@@ -110,6 +110,20 @@ public class DbHelper {
 		}
 	}
 
+	public static List<Comment> getComments(long parentid) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Query query = pm.newQuery(Comment.class);
+		try {
+			query.setFilter("parentid == parentidParam");
+			query.declareParameters("Long parentidParam");
+			return new ArrayList<Comment>((List<Comment>) query
+					.execute(parentid));
+		} finally {
+			query.closeAll();
+			pm.close();
+		}
+	}
+
 	public static List<Comment> getAllComments(){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try{

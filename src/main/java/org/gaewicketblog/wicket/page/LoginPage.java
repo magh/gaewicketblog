@@ -1,6 +1,7 @@
 package org.gaewicketblog.wicket.page;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.request.target.basic.RedirectRequestTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +10,7 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
-public class LoginPage extends BorderPage {
+public class LoginPage extends WebPage {
 	
 	public final static String MOUNTPATH = "/login";
 

@@ -29,6 +29,9 @@ public class DatabaseCommentProvider extends SortableDataProvider<Comment>
 
 	public Iterator<Comment> iterator(int first, int count) {
 		SortParam sp = getSort();
+		if(sp == null){
+			sp = new SortParam("", true);
+		}
 		String property = sp.getProperty();
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Query query = pm.newQuery(Comment.class);
