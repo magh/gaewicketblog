@@ -39,8 +39,14 @@ public class FixedCommentProvider extends SortableDataProvider<Comment>
 			cmp = CommentHelper.byAuthor;
 		}else if(SORT_SUBJECT.equals(property)) {
 			cmp = CommentHelper.bySubject;
-//		}else if(SORT_COMMENTS.equals(property)) {
-//			cmp = CommentHelper.bySubject;
+		}else if(SORT_COMMENTS.equals(property)) {
+			cmp = CommentHelper.byComments;
+		}else if(SORT_STATUS.equals(property)) {
+			cmp = CommentHelper.byStatus;
+		}else if(SORT_TYPE.equals(property)) {
+			cmp = CommentHelper.byType;
+		}else if(SORT_VOTES.equals(property)) {
+			cmp = CommentHelper.byVotes;
 		}else{
 			cmp = CommentHelper.byDate;
 		}

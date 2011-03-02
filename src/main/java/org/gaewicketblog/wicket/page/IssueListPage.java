@@ -170,7 +170,7 @@ public class IssueListPage extends BorderPage {
 				choices, new ChoiceRenderer<Pair<Integer, String>>("second")));
 		searchform.add(new TextField<String>("search", search));
 	}
-	
+
 	private void search(TopicSetting setting, String in,
 			Pair<Integer, String> status) {
 		List<Comment> comments = DbHelper.getComments(setting.id);

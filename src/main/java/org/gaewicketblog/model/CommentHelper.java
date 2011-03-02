@@ -114,6 +114,46 @@ public class CommentHelper {
 		}
 	};
 
+	public static Comparator<Comment> byComments = new Comparator<Comment>() {
+		@Override
+		public int compare(Comment arg0, Comment arg1) {
+			if (arg0 != null && arg1 != null) {
+				return Integer.valueOf(arg0.getComments()).compareTo(arg1.getComments());
+			}
+			return -1;
+		}
+	};
+
+	public static Comparator<Comment> byStatus = new Comparator<Comment>() {
+		@Override
+		public int compare(Comment arg0, Comment arg1) {
+			if (arg0 != null && arg1 != null) {
+				return Integer.valueOf(arg0.getStatus()).compareTo(arg1.getStatus());
+			}
+			return -1;
+		}
+	};
+
+	public static Comparator<Comment> byVotes = new Comparator<Comment>() {
+		@Override
+		public int compare(Comment arg0, Comment arg1) {
+			if (arg0 != null && arg1 != null) {
+				return Integer.valueOf(arg0.getVotes()).compareTo(arg1.getVotes());
+			}
+			return -1;
+		}
+	};
+
+	public static Comparator<Comment> byType = new Comparator<Comment>() {
+		@Override
+		public int compare(Comment arg0, Comment arg1) {
+			if (arg0 != null && arg1 != null) {
+				return Integer.valueOf(arg0.getType()).compareTo(arg1.getType());
+			}
+			return -1;
+		}
+	};
+
 	public static Comment getById(List<Comment> tasks, long id) {
 		for (Comment item : tasks) {
 			if (item.getId() == id) {
