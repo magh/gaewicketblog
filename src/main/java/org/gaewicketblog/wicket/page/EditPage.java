@@ -32,6 +32,7 @@ import org.apache.wicket.validation.validator.StringValidator;
 import org.gaewicketblog.common.AppEngineHelper;
 import org.gaewicketblog.common.DbHelper;
 import org.gaewicketblog.common.Util;
+import org.gaewicketblog.common.XssUtil;
 import org.gaewicketblog.model.Comment;
 import org.gaewicketblog.model.CommentHelper;
 import org.gaewicketblog.model.TopicSetting;
@@ -120,22 +121,23 @@ public class EditPage extends BorderPage {
 			@Override
 			protected void onSubmit() {
 				try {
+					String scrubbed = XssUtil.scrub(text.getObject());
 					Comment newComment;
 					if(update){
 						// update
 						newComment = updateComment;
 						newComment.setSubject(subject.getObject());
-						newComment.setText(new Text(text.getObject()));
+						newComment.setText(new Text(scrubbed));
 						newComment.setAuthor(name.getObject());
 					}else{
 						// add
 						String ipaddress = getIpAddress();
 						newComment = new Comment(addParent.id, subject.getObject(),
-								new Text(text.getObject()), name.getObject(), ipaddress, null);
+								new Text(scrubbed), name.getObject(), ipaddress, null);
 					}
 					newComment.setEmail(email.getObject());
 					newComment.setHomepage(homepage.getObject());
-					String noteStr = note.getObject();
+					String noteStr = XssUtil.scrub(note.getObject());
 					newComment.setNote(noteStr != null ? new Text(noteStr) : null);
 					newComment.setVotes(votes.getObject());
 					Pair<Integer, String> statusVal = status.getObject();
@@ -204,7 +206,7 @@ public class EditPage extends BorderPage {
 		editform.add(new TextField<String>("subject", subject)
 				.add(StringValidator.maximumLength(100)));
 		editform.add(new TextArea<String>("message", text).setRequired(true).add(
-				StringValidator.lengthBetween(2, 5000)).add(
+				StringValidator.lengthBetween(2, 7000)).add(
 				new TinyMceBehavior(settings)));
 		editform.add(new TextField<String>("email", email).add(
 				EmailAddressValidator.getInstance()).add(
@@ -230,7 +232,7 @@ public class EditPage extends BorderPage {
 		WebMarkupContainer adminfields = new WebMarkupContainer("adminfields");
 		editform.add(adminfields.setVisible(admin));
 		adminfields.add(new TextArea<String>("note", note).add(
-				StringValidator.maximumLength(5000)).add(new TinyMceBehavior(settings)));
+				StringValidator.maximumLength(7000)).add(new TinyMceBehavior(settings)));
 		adminfields.add(new TextField<Integer>("votes", votes, Integer.class));
 		List<Pair<Integer, String>> choices = new ArrayList<Pair<Integer,String>>();
 		choices.add(newStatusPair(Comment.STATUS_UNASSIGNED));

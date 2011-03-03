@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
@@ -16,7 +17,6 @@ import org.gaewicketblog.model.TopicSetting;
 import org.gaewicketblog.model.TopicSettingHelper;
 import org.gaewicketblog.wicket.application.BlogApplication;
 import org.gaewicketblog.wicket.common.DisqusCountPanel;
-import org.gaewicketblog.wicket.common.ImgSmartLinkMultiLineLabel;
 import org.gaewicketblog.wicket.common.SimplePagingNavigator;
 import org.gaewicketblog.wicket.panel.ContactPanel;
 import org.gaewicketblog.wicket.panel.RecentPostsPanel;
@@ -74,8 +74,8 @@ public class ListPage extends BorderPage {
 			protected void populateItem(final Item<Comment> item) {
 				final Comment comment = item.getModelObject();
 				item.add(new Label("author", comment.getAuthor()));
-				item.add(new ImgSmartLinkMultiLineLabel("text", comment
-						.getText().getValue()).setVisible(setting.showText)
+				item.add(new MultiLineLabel("text", comment.getText()
+						.getValue()).setVisible(setting.showText)
 						.setEscapeModelStrings(false));
 				// <p><span wicket:id="note" class="triangle-border right">[note]</span></p>
 //				String note = comment.getNote() != null ? comment.getNote().getValue() : "";

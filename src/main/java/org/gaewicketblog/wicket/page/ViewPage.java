@@ -1,6 +1,7 @@
 package org.gaewicketblog.wicket.page;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -16,7 +17,6 @@ import org.gaewicketblog.model.TopicSetting;
 import org.gaewicketblog.model.TopicSettingHelper;
 import org.gaewicketblog.wicket.application.BlogApplication;
 import org.gaewicketblog.wicket.common.DisqusPanel;
-import org.gaewicketblog.wicket.common.ImgSmartLinkMultiLineLabel;
 import org.gaewicketblog.wicket.panel.ContactPanel;
 import org.gaewicketblog.wicket.panel.RecentPostsPanel;
 import org.gaewicketblog.wicket.panel.SearchPanel;
@@ -68,11 +68,11 @@ public class ViewPage extends BorderPage {
         final Comment comment = commentModel.getObject();
 		add(new Label("author", comment.getAuthor()));
 		add(new Label("subject", comment.getSubject()));
-		add(new ImgSmartLinkMultiLineLabel("text", comment.getText().getValue())
+		add(new MultiLineLabel("text", comment.getText().getValue())
 				.setEscapeModelStrings(false));
 		String note = comment.getNote() != null ? comment.getNote().getValue() : "";
-		add(new ImgSmartLinkMultiLineLabel("note", note).setVisible(
-				!Util.isEmpty(note)).setEscapeModelStrings(false));
+		add(new MultiLineLabel("note", note).setVisible(!Util.isEmpty(note))
+				.setEscapeModelStrings(false));
 		add(new Label("date", ""+comment.getDate()));
 
 		Integer status = comment.getStatus();
