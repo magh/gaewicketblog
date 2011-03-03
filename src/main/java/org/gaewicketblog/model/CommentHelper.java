@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CommentHelper {
-	
+
 	private final static Logger log = LoggerFactory.getLogger(CommentHelper.class);
 
 //	private final static SimpleDateFormat DATEFORMAT = new SimpleDateFormat("yyyy-MM-dd ");

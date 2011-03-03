@@ -93,8 +93,15 @@ public class IssueListPage extends BorderPage {
 			@Override
 			protected void populateItem(final Item<Comment> item) {
 				final Comment comment = item.getModelObject();
-				Integer status = comment.getStatus();
-				item.add(CommentHelper.newStatusColorLabel(this, "status",
+				final Integer status = comment.getStatus();
+				Link<Void> statuslink = new Link<Void>("statuslink"){
+					@Override
+					public void onClick() {
+						search(setting, "", status);
+					}
+				};
+				item.add(statuslink);
+				statuslink.add(CommentHelper.newStatusColorLabel(this, "status",
 						status));
 				item.add(new Label("votes", ""+comment.getVotes()));
 				item.add(new Label("author", comment.getAuthor()));
@@ -114,7 +121,7 @@ public class IssueListPage extends BorderPage {
 			}
 		};
 
-		dataView.setItemsPerPage(15);
+		dataView.setItemsPerPage(50);
 		provider.setSort(ICommentProvider.SORT_DATE, false);
 
 		add(newOrderByBorder("orderByStatus", ICommentProvider.SORT_STATUS,
@@ -139,7 +146,9 @@ public class IssueListPage extends BorderPage {
 		Form<Void> searchform = new Form<Void>("searchform"){
 			@Override
 			protected void onSubmit() {
-				search(setting, search.getObject(), status.getObject());
+				Pair<Integer, String> statusVal = status.getObject();
+				search(setting, search.getObject(),
+						statusVal != null ? statusVal.first : null);
 			}
 		};
 		add(searchform);
@@ -171,17 +180,16 @@ public class IssueListPage extends BorderPage {
 		searchform.add(new TextField<String>("search", search));
 	}
 
-	private void search(TopicSetting setting, String in,
-			Pair<Integer, String> status) {
+	private void search(TopicSetting setting, String in, Integer status) {
 		List<Comment> comments = DbHelper.getComments(setting.id);
 		int[] statusArr = null;
 		if(status != null) {
-			if(status.first == STATUSES_OPEN){
+			if(status == STATUSES_OPEN){
 				statusArr = Comment.STATUSES_OPEN;
-			} else if(status.first == STATUSES_CLOSED) {
+			} else if(status == STATUSES_CLOSED) {
 				statusArr = Comment.STATUSES_CLOSED;
 			} else {
-				statusArr = new int[]{status.first};
+				statusArr = new int[]{status};
 			}
 		}
 		setResponsePage(new IssueListPage(setting, CommentHelper
