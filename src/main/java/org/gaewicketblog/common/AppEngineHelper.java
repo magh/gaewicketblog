@@ -25,4 +25,16 @@ public class AppEngineHelper {
 		return false;
 	}
 
+	public static boolean isCurrentUser(User user, String...emails) {
+        if (user != null) {
+        	log.debug("user="+user.toString());
+        	for (String email : emails) {
+				if (email != null && email.equalsIgnoreCase(user.getEmail())) {
+					return true;
+				}
+			}
+        }
+		return false;
+	}
+
 }

@@ -16,13 +16,14 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.session.ISessionStore;
 import org.gaewicketblog.common.DbHelper;
 import org.gaewicketblog.common.PMF;
+import org.gaewicketblog.common.Util;
 import org.gaewicketblog.model.Comment;
 import org.gaewicketblog.model.CommentHelper;
 import org.gaewicketblog.model.TopicSetting;
 import org.gaewicketblog.model.TopicSettingHelper;
 import org.gaewicketblog.wicket.exception.BlogException;
 import org.gaewicketblog.wicket.page.DisqusCronPage;
-import org.gaewicketblog.wicket.page.ListPage;
+import org.gaewicketblog.wicket.page.HomePage;
 import org.gaewicketblog.wicket.page.LoginPage;
 import org.gaewicketblog.wicket.page.ViewPage;
 import org.slf4j.Logger;
@@ -38,7 +39,7 @@ public class BlogApplication extends WebApplication {
 
 	@Override
 	public Class<? extends Page> getHomePage() {
-		return ListPage.class;
+		return HomePage.class;
 	}
 
 	@Override
@@ -121,8 +122,8 @@ public class BlogApplication extends WebApplication {
 			try{
 				long id = Long.parseLong(props.getProperty("header.menu"+i+".id"));
 				String path = props.getProperty("header.menu"+i+".path");
-				boolean canPost = Boolean.parseBoolean(props.getProperty("header.menu"+i+".canpost"));
-				boolean showText = Boolean.parseBoolean(props.getProperty("header.menu"+i+".showtext"));
+				boolean canPost = Util.parseBool(props.getProperty("header.menu"+i+".canpost"), false);
+				boolean showText = Util.parseBool(props.getProperty("header.menu"+i+".showtext"), true);
 				String topic = props.getProperty("header.menu"+i+".title");
 				String topicdesc = props.getProperty("header.menu"+i+".description");
 				String clz = props.getProperty("header.menu"+i+".class");

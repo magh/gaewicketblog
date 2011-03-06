@@ -94,7 +94,6 @@ public class EditPage extends BorderPage {
 		final IModel<String> email = new Model<String>();
 		final IModel<String> homepage = new Model<String>();
 		final IModel<Pair<Integer, String>> status = new Model<Pair<Integer, String>>();
-		final IModel<Integer> votes = new Model<Integer>();
 		
 		UserService userService = UserServiceFactory.getUserService();
         final User currentUser = userService.getCurrentUser();
@@ -107,7 +106,6 @@ public class EditPage extends BorderPage {
 			name.setObject(updateComment.getAuthor());
 			email.setObject(updateComment.getEmail());
 			homepage.setObject(updateComment.getHomepage());
-			votes.setObject(updateComment.getVotes());
 			status.setObject(newStatusPair(updateComment != null ? updateComment
 					.getStatus() : Comment.STATUS_UNASSIGNED));
 		}else{ // add
@@ -139,7 +137,6 @@ public class EditPage extends BorderPage {
 					newComment.setHomepage(homepage.getObject());
 					String noteStr = XssUtil.scrub(note.getObject());
 					newComment.setNote(noteStr != null ? new Text(noteStr) : null);
-					newComment.setVotes(votes.getObject());
 					Pair<Integer, String> statusVal = status.getObject();
 					if(statusVal != null){
 						newComment.setStatus(statusVal.first);
@@ -233,7 +230,6 @@ public class EditPage extends BorderPage {
 		editform.add(adminfields.setVisible(admin));
 		adminfields.add(new TextArea<String>("note", note).add(
 				StringValidator.maximumLength(7000)).add(new TinyMceBehavior(settings)));
-		adminfields.add(new TextField<Integer>("votes", votes, Integer.class));
 		List<Pair<Integer, String>> choices = new ArrayList<Pair<Integer,String>>();
 		choices.add(newStatusPair(Comment.STATUS_UNASSIGNED));
 		choices.add(newStatusPair(Comment.STATUS_OPEN_NEEDSINFO));

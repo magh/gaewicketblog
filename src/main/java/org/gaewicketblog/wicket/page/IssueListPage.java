@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.OrderByBorder;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
@@ -12,6 +13,7 @@ import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
@@ -34,6 +36,9 @@ import org.gaewicketblog.wicket.provider.ICommentProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.repackaged.com.google.common.base.Pair;
 
 @SuppressWarnings("serial")
@@ -86,8 +91,10 @@ public class IssueListPage extends BorderPage {
 			}
 		}.add(new Label("topicdesc", setting.topicdesc)));
 
+		UserService userService = UserServiceFactory.getUserService();
+		final User user = userService.getCurrentUser();
 		String adminemail = getString("admin.email");
-		boolean admin = AppEngineHelper.isCurrentUser(adminemail);
+		boolean admin = AppEngineHelper.isCurrentUser(user, adminemail);
 
 		final DataView<Comment> dataView = new DataView<Comment>("sorting", provider) {
 			@Override
@@ -118,6 +125,41 @@ public class IssueListPage extends BorderPage {
 										: "odd";
 							}
 						}));
+				//star
+				Link<Void> starlink = new Link<Void>("starlink"){
+					@Override
+					public void onClick() {
+						if(user != null){
+							List<String> starredIds = comment.getStarredIds();
+							if(starredIds == null){
+								starredIds = new ArrayList<String>();
+							}
+							String userId = user.getUserId();
+							if(starredIds.contains(userId)){
+								starredIds.remove(userId);
+							}else{
+								starredIds.add(userId);
+							}
+							comment.setStarredIds(starredIds);
+							DbHelper.merge(comment);
+							setResponsePage(IssueListPage.class);
+						}
+					}
+				};
+				Image star;
+				if(user != null) {
+					List<String> starredIds = comment.getStarredIds();
+					if(starredIds != null && starredIds.contains(user.getUserId())){
+						star = new Image("star", new ResourceReference(BlogApplication.class, "images/star.png"));
+					}else{
+						star = new Image("star", new ResourceReference(BlogApplication.class, "images/star_unchecked.png"));
+					}
+				}else{
+					star = new Image("star", new ResourceReference(BlogApplication.class, "images/star_unavailable.png"));
+					starlink.add(new AttributeModifier("title", true, 
+							new Model<String>("You have to login to be able to star an issue")));
+				}
+				item.add(starlink.add(star));
 			}
 		};
 
@@ -143,7 +185,7 @@ public class IssueListPage extends BorderPage {
 
 		final IModel<String> search = new Model<String>();
 		final IModel<Pair<Integer, String>> status = new Model<Pair<Integer, String>>();
-		Form<Void> searchform = new Form<Void>("searchform"){
+		Form<Void> searchform = new Form<Void>("searchform") {
 			@Override
 			protected void onSubmit() {
 				Pair<Integer, String> statusVal = status.getObject();

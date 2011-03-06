@@ -196,7 +196,7 @@ public class CommentHelper {
 	}
 
 	public static String escape(String in) {
-		return in.replaceAll("[\\,/,?,:,\",*,<,>,|,\\',\\’,\\‘]", "");
+		return in.replaceAll("\\W", "");
 	}
 
 	/**

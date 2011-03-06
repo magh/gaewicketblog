@@ -2,6 +2,7 @@ package org.gaewicketblog.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
@@ -103,6 +104,10 @@ public class Comment implements Serializable {
 	/** User comments. */
 	@Persistent
 	private Integer comments;
+
+	/** Starred user ids. */
+	@Persistent
+	private List<String> starredIds;
 
 //	@Persistent
 //	@Element(dependent = "true")
@@ -221,6 +226,11 @@ public class Comment implements Serializable {
 		return votes != null ? votes : 0;
 	}
 
+	/**
+	 * DONT USE: Will be overwritten with starredIds.size()
+	 * @deprecated
+	 * @param votes
+	 */
 	public void setVotes(Integer votes) {
 		this.votes = votes;
 	}
@@ -263,6 +273,15 @@ public class Comment implements Serializable {
 
 	public void setComments(Integer comments) {
 		this.comments = comments;
+	}
+
+	public List<String> getStarredIds() {
+		return starredIds;
+	}
+
+	public void setStarredIds(List<String> starredIds) {
+		this.starredIds = starredIds;
+		setVotes(starredIds != null ? starredIds.size() : 0);
 	}
 
 }

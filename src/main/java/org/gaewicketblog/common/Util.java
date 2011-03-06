@@ -28,6 +28,16 @@ public class Util {
 		return def;
 	}
 
+	public static boolean parseBool(String in, boolean def){
+		try{
+			if(!isEmpty(in)){
+				return Boolean.parseBoolean(in);
+			}
+		}catch(Throwable t){
+		}
+		return def;
+	}
+
 	public static String readStream(InputStream is) throws IOException {
 		try {
 			int c;
