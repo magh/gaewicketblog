@@ -1,22 +1,33 @@
-# GaeWicketBlog
+## GaeWicketBlog ##
 
-Simple blog framework using Wicket on Google App Engine.
+# General
+GaeWicketBlog is a simple open source blog engine running on the free hosting service Google App Engine. GaeWicketBlog is built using the Java web framework Wicket (http://wicket.apache.org).
 
-## Fork and update the following files:
-- ./src/main/webapp/WEB-INF/appengine-web.xml (Mandatory)
-- ./src/main/java/org/gaewicketblog/wicket/BorderPage.properties (Optional)
-- ./src/main/java/org/gaewicketblog/wicket/ContactPanel.properties (Optional)
-- ./src/main/java/org/gaewicketblog/wicket/BlogApplication.properties (Optional)
-- ./src/main/java/org/gaewicketblog/wicket/images/icon.png (Optional)
-- ./src/main/java/org/gaewicketblog/wicket/images/favicon.ico (Optional)
+Installation is fairly simple and should not require any Wicket specific knowledge.
+The appengine SDK (http://code.google.com/appengine) is required for deployment.
+The version control system git (http://git-scm.com/download) is required to retrieve the source code.
+ 
+# Installation
+Clone source code:
+git clone git@github.com:magh/gaewicketblog.git
 
-## Build
-### Full update, asks for login credentials.
-$APPENGINE_HOME/bin/appcfg.sh update target/war
-### Simple update, can be executed after a full update.
-ant clean update
-### Maven project build (not required before appengine update).
-mvn clean package
+Update the appengine file with your application and version identifiers (mandatory):
+src/main/webapp/WEB-INF/appengine-web.xml 
 
-![Screenshoot](http://magh.github.com/gaewicketblog/screenshots/2011-01-11.png)
+Update the gwb properties with your blog specific information (optional):
+src/main/java/org/gaewicketblog/wicket/application/BlogApplication.properties 
+
+Update the blog logo (optional):
+src/main/java/org/gaewicketblog/wicket/images/icon.png 
+
+# Deploy
+gaewicketblog> appcfg.sh update target/war
+
+# Development
+Feel free to fork the project on github. Design improvments, bug reports, feature requests are very welcomed. Issues can be posted here (http://gaewicketblog.appspot.com/issues) or on the github issue tracker. 
+
+Eclipse project files can be generated with maven:
+gaewicketblog> mvn eclipse:eclipse
+
+![Screenshoot](http://magh.github.com/gaewicketblog/screenshots/post.png)
 
