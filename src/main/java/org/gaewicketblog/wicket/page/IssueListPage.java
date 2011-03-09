@@ -74,12 +74,15 @@ public class IssueListPage extends BorderPage {
 	 * @param comments
 	 */
 	public IssueListPage(TopicSetting setting, List<Comment> comments){
+		this(setting, new FixedCommentProvider(comments));
+	}
+
+	public IssueListPage(TopicSetting setting, SortableDataProvider<Comment> provider){
 		super();
-		FixedCommentProvider provider = new FixedCommentProvider(comments);
 		init(setting, provider);
 	}
 
-	private void init(final TopicSetting setting, SortableDataProvider<Comment> provider) {
+	private void init(final TopicSetting setting, final SortableDataProvider<Comment> provider) {
 		log.debug("ListPage<long> "+setting);
 
 		add(new Label("topic", setting.topic));
@@ -131,7 +134,7 @@ public class IssueListPage extends BorderPage {
 					public void onClick() {
 						if(user != null){
 							List<String> starredIds = comment.getStarredIds();
-							if(starredIds == null){
+							if(starredIds == null) {
 								starredIds = new ArrayList<String>();
 							}
 							String userId = user.getUserId();
@@ -142,7 +145,7 @@ public class IssueListPage extends BorderPage {
 							}
 							comment.setStarredIds(starredIds);
 							DbHelper.merge(comment);
-							setResponsePage(IssueListPage.class);
+							setResponsePage(new IssueListPage(setting, provider));
 						}
 					}
 				};
