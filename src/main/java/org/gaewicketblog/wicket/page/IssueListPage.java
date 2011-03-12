@@ -181,6 +181,8 @@ public class IssueListPage extends BorderPage {
 				provider, dataView));
 		add(newOrderByBorder("orderByComments", ICommentProvider.SORT_COMMENTS,
 				provider, dataView));
+		add(newOrderByBorder("orderByStarred", ICommentProvider.SORT_STARRED,
+				provider, dataView).setEnabled(user != null));
 
 		add(dataView);
 

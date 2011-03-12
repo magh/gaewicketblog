@@ -13,6 +13,10 @@ import org.apache.wicket.model.Model;
 import org.gaewicketblog.model.Comment;
 import org.gaewicketblog.model.CommentHelper;
 
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+
 @SuppressWarnings("serial")
 public class FixedCommentProvider extends SortableDataProvider<Comment>
 		implements ICommentProvider {
@@ -47,6 +51,11 @@ public class FixedCommentProvider extends SortableDataProvider<Comment>
 			cmp = CommentHelper.byType;
 		}else if(SORT_VOTES.equals(property)) {
 			cmp = CommentHelper.byVotes;
+		}else if(SORT_STARRED.equals(property)) {
+			UserService userService = UserServiceFactory.getUserService();
+			User user = userService.getCurrentUser();
+			cmp = CommentHelper.byStarred(user != null ? user.getUserId()
+					: null);
 		}else{
 			cmp = CommentHelper.byDate;
 		}

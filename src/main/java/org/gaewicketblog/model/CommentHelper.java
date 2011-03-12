@@ -57,6 +57,26 @@ public class CommentHelper {
 		return "white";
 	}
 
+	public static Comparator<Comment> byStarred(final String userId) {
+		return new Comparator<Comment>() {
+			@Override
+			public int compare(Comment arg0, Comment arg1) {
+				if (arg0 != null && arg1 != null) {
+					List<String> arg0Ids = arg0.getStarredIds();
+					boolean arg0cont = arg0Ids != null ? arg0Ids.contains(userId) : false;
+					List<String> arg1Ids = arg1.getStarredIds();
+					boolean arg1cont = arg1Ids != null ? arg1Ids.contains(userId) : false;
+					int ret = new Boolean(arg1cont).compareTo(arg0cont);
+					if(ret == 0) {
+						return byVotes.compare(arg0, arg1);
+					}
+					return ret;
+				}
+				return -1;
+			}
+		};
+	}
+
 	public static Comparator<Comment> byDate = new Comparator<Comment>() {
 		@Override
 		public int compare(Comment arg0, Comment arg1) {

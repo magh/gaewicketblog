@@ -16,15 +16,11 @@ import com.google.appengine.api.datastore.KeyFactory;
 
 public class DbHelper {
 
-	public static int count(Query query){
+	public static int count(Query query) {
 		query.setResult("count(this)");
-		try{
-			Object obj = query.execute();
-			// log.error("size: "+obj);
-			return (Integer)obj;
-		}finally{
-			query.closeAll();
-		}
+		Object obj = query.execute();
+		// log.error("size: "+obj);
+		return (Integer)obj;
 	}
 
 	public static <T> T merge(T obj){

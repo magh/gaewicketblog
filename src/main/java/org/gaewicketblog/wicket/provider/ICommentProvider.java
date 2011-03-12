@@ -13,5 +13,6 @@ public interface ICommentProvider extends Serializable {
 	public static final String SORT_VOTES = "votes";
 	public static final String SORT_TYPE = "type";
 	public static final String SORT_COMMENTS = "comments";
+	public static final String SORT_STARRED = "starred";
 
 }

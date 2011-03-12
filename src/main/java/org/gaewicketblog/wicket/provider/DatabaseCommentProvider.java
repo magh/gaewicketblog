@@ -1,6 +1,8 @@
 package org.gaewicketblog.wicket.provider;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,6 +16,11 @@ import org.apache.wicket.model.Model;
 import org.gaewicketblog.common.DbHelper;
 import org.gaewicketblog.common.PMF;
 import org.gaewicketblog.model.Comment;
+import org.gaewicketblog.model.CommentHelper;
+
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 
 @SuppressWarnings("serial")
 public class DatabaseCommentProvider extends SortableDataProvider<Comment>
@@ -36,6 +43,7 @@ public class DatabaseCommentProvider extends SortableDataProvider<Comment>
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Query query = pm.newQuery(Comment.class);
 		query.setFilter("parentid == parentidParam");
+		//order
 		if(SORT_DATE.equals(property)) {
 			query.setOrdering(sp.isAscending() ? "date" : "date desc");
 		}else if(SORT_TEXT.equals(property)) {
@@ -55,25 +63,49 @@ public class DatabaseCommentProvider extends SortableDataProvider<Comment>
 		}else{
 			query.setOrdering(sp.isAscending() ? "date" : "date desc");
 		}
-		query.setIgnoreCache(true);
-		query.setRange(first, first+count);
+//		query.setIgnoreCache(true);
 		query.declareParameters("Long parentidParam");
-		try{
-//			return Collections.synchronizedList(query.execute(parentid))
-//					.iterator();
-			List<Comment> temp = new ArrayList<Comment>((List<Comment>) query
-					.execute(parentid));
-			return temp.iterator();
-		}finally{
-			query.closeAll();
-			pm.close();
+		// handle special cases
+		if(SORT_STARRED.equals(property)){
+			//FIXME inefficient
+			try {
+				UserService userService = UserServiceFactory.getUserService();
+				User user = userService.getCurrentUser();
+				Comparator<Comment> cmp = CommentHelper
+						.byStarred(user != null ? user.getUserId() : null);
+				List<Comment> temp = new ArrayList<Comment>(
+						(List<Comment>) query.execute(parentid));
+				Collections.sort(temp, cmp);
+				temp.subList(first, first + count);
+				return temp.iterator();
+			} finally {
+				query.closeAll();
+				pm.close();
+			}
+		}else{
+			query.setRange(first, first+count);
+			try{
+//				return Collections.synchronizedList(query.execute(parentid))
+//						.iterator();
+				List<Comment> temp = new ArrayList<Comment>((List<Comment>) query
+						.execute(parentid));
+				return temp.iterator();
+			}finally{
+				query.closeAll();
+				pm.close();
+			}
 		}
 	}
 
 	public int size() {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Query query = pm.newQuery(Comment.class, "parentid == "+parentid);
-		return DbHelper.count(query);
+		try{
+			return DbHelper.count(query);
+		}finally{
+			query.closeAll();
+			pm.close();
+		}
 	}
 
 	public IModel<Comment> model(Comment object) {
