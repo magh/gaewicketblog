@@ -212,11 +212,7 @@ public class CommentHelper {
 	}
 
 	public static String genUrlPath(String subject) {
-		return "/"+escape(subject.toLowerCase().replace(' ', '_'));
-	}
-
-	public static String escape(String in) {
-		return in.replaceAll("\\W", "");
+		return "/"+Util.escape(subject.toLowerCase().replace(' ', '_'));
 	}
 
 	/**

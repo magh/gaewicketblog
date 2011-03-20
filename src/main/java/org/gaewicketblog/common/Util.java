@@ -82,4 +82,8 @@ public class Util {
 		return false;
 	}
 
+	public static String escape(String in) {
+		return in.replaceAll("\\W", "");
+	}
+
 }

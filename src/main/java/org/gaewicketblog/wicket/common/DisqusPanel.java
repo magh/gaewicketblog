@@ -24,9 +24,10 @@ public class DisqusPanel extends Panel {
 			if(purl != null){
 				sb.append("var disqus_url = '").append(purl).append("';\n");
 			}
-			if(ptitle != null){
-				sb.append("var disqus_title = '").append(ptitle).append("';\n");
-			}
+			// TODO remove below. Caused comments to end up on all threads.
+//			if(ptitle != null){
+//				sb.append("var disqus_title = '").append(ptitle).append("';\n");
+//			}
 			// DON'T EDIT BELOW THIS LINE
 			sb.append("(function() {\n");
 			sb.append("var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;\n");
