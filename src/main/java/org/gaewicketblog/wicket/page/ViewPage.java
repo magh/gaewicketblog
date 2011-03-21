@@ -49,12 +49,7 @@ public class ViewPage extends BorderPage {
 	public ViewPage() {
 		String path = WicketHelper.getCurrentRestfulPath();
 		long id = Util.parseLong(path, -1);
-		Comment comment;
-		if(id == -1){
-			comment = DbHelper.getCommentByLink("/"+path);
-		}else{
-			comment = DbHelper.getComment(id);
-		}
+		Comment comment = DbHelper.getCommentByLink("/"+path);
 		if(comment == null){
 			log.error(getString("viewpage.error.commentnotfound")+" id="+id);
 			String error = getString("viewpage.error.error");

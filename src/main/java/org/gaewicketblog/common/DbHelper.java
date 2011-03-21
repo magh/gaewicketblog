@@ -120,6 +120,19 @@ public class DbHelper {
 		}
 	}
 
+	public static List<Comment> getComments(long parentid, int[] statuses) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Query query = pm.newQuery(Comment.class, "parentid == " + parentid
+				+ " && :p1.contains(status)");
+		try {
+			return new ArrayList<Comment>((List<Comment>) query
+					.execute(Util.asList(statuses)));
+		} finally {
+			query.closeAll();
+			pm.close();
+		}
+	}
+
 	public static List<Comment> getAllComments(){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try{

@@ -1,9 +1,6 @@
 package org.gaewicketblog.wicket.page;
 
 import org.apache.wicket.markup.html.WebPage;
-import org.gaewicketblog.common.WicketHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Wicket seems to lookup, and redirect to, the alphabetically last mounted url
@@ -14,11 +11,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HomePage extends WebPage {
 
-	private final static Logger log = LoggerFactory.getLogger(HomePage.class);
-
 	public HomePage() {
-		String path = WicketHelper.getCurrentRestfulPath();
-		log.error("path=" + path);
 		setResponsePage(ListPage.class);
 	}
 

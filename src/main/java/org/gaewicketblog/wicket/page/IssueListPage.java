@@ -56,7 +56,7 @@ public class IssueListPage extends BorderPage {
 		String path = WicketHelper.getCurrentRestfulPath();
 		BlogApplication app = (BlogApplication) getApplication();
 		TopicSetting setting = TopicSettingHelper.getByPath(app.topics, path);
-		DatabaseCommentProvider provider = new DatabaseCommentProvider(setting.id);
+		DatabaseCommentProvider provider = new DatabaseCommentProvider(setting.id, Comment.STATUSES_OPEN);
 		init(setting, provider);
 	}
 
@@ -228,7 +228,6 @@ public class IssueListPage extends BorderPage {
 	}
 
 	private void search(TopicSetting setting, String in, Integer status) {
-		List<Comment> comments = DbHelper.getComments(setting.id);
 		int[] statusArr = null;
 		if(status != null) {
 			if(status == STATUSES_OPEN){
@@ -238,6 +237,12 @@ public class IssueListPage extends BorderPage {
 			} else {
 				statusArr = new int[]{status};
 			}
+		}
+		List<Comment> comments;
+		if(statusArr != null){
+			comments = DbHelper.getComments(setting.id, statusArr);
+		}else{
+			comments = DbHelper.getComments(setting.id);
 		}
 		setResponsePage(new IssueListPage(setting, CommentHelper
 				.search(comments, in, statusArr)));

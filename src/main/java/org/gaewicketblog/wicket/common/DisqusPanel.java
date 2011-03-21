@@ -18,9 +18,9 @@ public class DisqusPanel extends Panel {
 			}
 			sb.append("var disqus_shortname = '").append(shortname).append("';\n");
 			// The following are highly recommended additional parameters.
-			if(pid != null){
-				sb.append("var disqus_identifier = '").append(pid).append("';\n");
-			}
+//			if(pid != null){
+//				sb.append("var disqus_identifier = '").append(pid).append("';\n");
+//			}
 			if(purl != null){
 				sb.append("var disqus_url = '").append(purl).append("';\n");
 			}

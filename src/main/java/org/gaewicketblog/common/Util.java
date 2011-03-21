@@ -3,6 +3,8 @@ package org.gaewicketblog.common;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Util {
 
@@ -84,6 +86,20 @@ public class Util {
 
 	public static String escape(String in) {
 		return in.replaceAll("\\W", "");
+	}
+
+	/**
+	 * Convert primitive int[] to List<Integer>
+	 * Arrays.asList(int[]{}) returns List<int[]>(); 
+	 * @param in
+	 * @return
+	 */
+	public static List<Integer> asList(int[] in){
+		List<Integer> res = new ArrayList<Integer>();
+		for (int i = 0; in != null && i < in.length; i++) {
+			res.add(in[i]);
+		}
+		return res;
 	}
 
 }

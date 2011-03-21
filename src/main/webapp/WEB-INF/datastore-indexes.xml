@@ -60,4 +60,72 @@
 		<property name="parentid" direction="asc"/>
 		<property name="comments" direction="desc"/>
 	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="status" direction="asc" />
+		<property name="date" direction="asc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="status" direction="asc" />
+		<property name="date" direction="desc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="status" direction="asc" />
+		<property name="subject" direction="asc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="status" direction="asc" />
+		<property name="subject" direction="desc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="status" direction="asc" />
+		<property name="author" direction="asc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="status" direction="asc" />
+		<property name="author" direction="desc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="status" direction="asc" />
+		<property name="votes" direction="asc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="status" direction="asc" />
+		<property name="votes" direction="desc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="status" direction="asc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="status" direction="desc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="status" direction="asc" />
+		<property name="type" direction="asc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="status" direction="asc" />
+		<property name="type" direction="desc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="status" direction="asc" />
+		<property name="comments" direction="asc"/>
+	</datastore-index>
+	<datastore-index kind="Comment" ancestor="false" source="manual">
+		<property name="parentid" direction="asc"/>
+		<property name="status" direction="asc" />
+		<property name="comments" direction="desc"/>
+	</datastore-index>
 </datastore-indexes>
