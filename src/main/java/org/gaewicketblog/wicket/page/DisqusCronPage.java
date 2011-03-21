@@ -6,12 +6,13 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.gaewicketblog.common.DbHelper;
 import org.gaewicketblog.common.Util;
 import org.gaewicketblog.common.WicketHelper;
@@ -25,7 +26,7 @@ import org.slf4j.LoggerFactory;
 public class DisqusCronPage extends WebPage {
 	
 	public final static String MOUNTPATH = "/disquscron";
-	
+
 	private final static Logger log = LoggerFactory.getLogger(DisqusCronPage.class);
 
 	private final static String DISQUSFORUM = "http://disqus.com/forums/";
@@ -46,18 +47,20 @@ public class DisqusCronPage extends WebPage {
 			List<Comment> tomerge = new ArrayList<Comment>();
 	        String server = WicketHelper.getAbsolutUrl(this).replaceFirst(MOUNTPATH, "");
 	        int urllen = 0;
-	        for (Entry<Long, Comment> entry : commentsMap.entrySet()) {
+	        for (Iterator<Entry<Long, Comment>> it = commentsMap.entrySet()
+					.iterator(); it.hasNext();) {
+				Entry<Long, Comment> entry = it.next();
 	        	String url = server + CommentHelper.getUrlPath(entry.getValue());
 	        	urllen += url.length();
 				in.put(entry.getKey(), url);
-				if(in.size() >= MAX_PER_REQUEST || urllen >= MAX_LENGTH_PER_REQUEST) {
+				if(in.size() >= MAX_PER_REQUEST || urllen >= MAX_LENGTH_PER_REQUEST || !it.hasNext()) {
 					Map<Long, Integer> map = fetchCommentCounts(shortname, in);
 					log.info("fetched comment counts: "+map.size());
 					for (Entry<Long, Integer> resentry : map.entrySet()) {
 						Long uid = resentry.getKey();
 						Integer count = resentry.getValue();
 						Comment comment = commentsMap.get(uid);
-						if(comment.getComments() != count){
+						if(comment.getComments() != count) {
 							comment.setComments(count);
 							tomerge.add(comment);
 						}
@@ -74,7 +77,7 @@ public class DisqusCronPage extends WebPage {
 			log.error(e.getMessage(), e);
 			error = e.getMessage()+" - "+e;
 		}
-		add(new Label("result", error));
+		add(new MultiLineLabel("result", error));
 	}
 
 	public static Map<Long, Integer> fetchCommentCounts(String shortname,

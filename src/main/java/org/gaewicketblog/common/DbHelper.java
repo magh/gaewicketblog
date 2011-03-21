@@ -106,27 +106,21 @@ public class DbHelper {
 		}
 	}
 
-	public static List<Comment> getComments(long parentid) {
+	public static List<Comment> getComments(long parentid, int[] statuses) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Query query = pm.newQuery(Comment.class);
 		try {
-			query.setFilter("parentid == parentidParam");
-			query.declareParameters("Long parentidParam");
-			return new ArrayList<Comment>((List<Comment>) query
-					.execute(parentid));
-		} finally {
-			query.closeAll();
-			pm.close();
-		}
-	}
-
-	public static List<Comment> getComments(long parentid, int[] statuses) {
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		Query query = pm.newQuery(Comment.class, "parentid == " + parentid
-				+ " && :p1.contains(status)");
-		try {
-			return new ArrayList<Comment>((List<Comment>) query
-					.execute(Util.asList(statuses)));
+			if (statuses == null) {
+				query.setFilter("parentid == parentidParam");
+				query.declareParameters("Long parentidParam");
+				return new ArrayList<Comment>((List<Comment>) query
+						.execute(parentid));
+			} else {
+				query.setFilter("parentid == " + parentid
+						+ " && :p1.contains(status)");
+				return new ArrayList<Comment>((List<Comment>) query
+						.execute(Util.asList(statuses)));
+			}
 		} finally {
 			query.closeAll();
 			pm.close();

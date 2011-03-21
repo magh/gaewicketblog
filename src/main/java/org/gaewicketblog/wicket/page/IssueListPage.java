@@ -238,12 +238,7 @@ public class IssueListPage extends BorderPage {
 				statusArr = new int[]{status};
 			}
 		}
-		List<Comment> comments;
-		if(statusArr != null){
-			comments = DbHelper.getComments(setting.id, statusArr);
-		}else{
-			comments = DbHelper.getComments(setting.id);
-		}
+		List<Comment> comments = DbHelper.getComments(setting.id, statusArr);
 		setResponsePage(new IssueListPage(setting, CommentHelper
 				.search(comments, in, statusArr)));
 	}

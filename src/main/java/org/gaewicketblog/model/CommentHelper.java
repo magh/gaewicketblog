@@ -81,7 +81,7 @@ public class CommentHelper {
 		@Override
 		public int compare(Comment arg0, Comment arg1) {
 			if (arg0 != null && arg1 != null) {
-				return arg0.getDate().compareTo(arg1.getDate());
+				return arg1.getDate().compareTo(arg0.getDate());
 			}
 			return -1;
 		}
